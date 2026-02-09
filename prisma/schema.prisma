@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  tenantId      String?   @db.Uuid
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tenant   Tenant?   @relation(fields: [tenantId], references: [id])
+  accounts Account[]
+  sessions Session[]
+
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(uuid()) @db.Uuid
+  userId            String  @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionToken String   @unique
+  userId       String   @db.Uuid
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Tenant {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sites Site[]
+  users User[]
+
+  @@index([slug])
+  @@index([email])
+}
+
+model Site {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  subdomain   String   @unique
+  customDomain String?  @unique
+  description String?
+  content     Json?
+  tenantId    String   @db.Uuid
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  pages  Page[]
+
+  @@index([subdomain])
+  @@index([customDomain])
+  @@index([tenantId])
+}
+
+model Page {
+  id        String   @id @default(uuid()) @db.Uuid
+  title     String
+  slug      String
+  content   String?  @db.Text
+  siteId    String   @db.Uuid
+  isPublished Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  site Site @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([siteId, slug])
+  @@index([siteId])
+}

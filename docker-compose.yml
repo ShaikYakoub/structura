@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: structura-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: structura
+      POSTGRES_PASSWORD: structura_dev_password
+      POSTGRES_DB: structura
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U structura"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: structura-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://structura:structura_dev_password@postgres:5432/structura
+      NODE_ENV: production
+      AUTH_SECRET: super-secret-key-change-this-to-random-string-in-production-use-openssl-rand-base64-32
+      NEXTAUTH_URL: http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "node_modules/.bin/prisma migrate deploy && node server.js"
+
+volumes:
+  postgres_data:
+    driver: local
