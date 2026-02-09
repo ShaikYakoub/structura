@@ -1,6 +1,6 @@
 # Stage 1: Dependencies
 FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat git python3 make g++
+RUN apk add --no-cache libc6-compat gcc g++ make python3 git
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
