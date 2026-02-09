@@ -4,11 +4,6 @@ services:
     container_name: structura-app
     build: .
     restart: always
-    # 👇 Keeps the IP link working (Backup)
-    ports:
-      - "3000:3000"
-    expose:
-      - "3000"
     environment:
       # Database
       - DATABASE_URL=${DATABASE_URL}
