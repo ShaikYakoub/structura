@@ -1,35 +1,40 @@
 version: '3.8'
+
 services:
   app:
     container_name: structura-app
     build: .
     restart: always
+    ports:
+      - "3000:3000"
     environment:
-      # Database
+      # --- Database ---
       - DATABASE_URL=${DATABASE_URL}
       
-      # Auth (Updates the URL to the domain)
+      # --- Auth ---
       - NEXTAUTH_URL=https://shaikyakoub.com
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - AUTH_TRUST_HOST=true
       
-      # Storage
+      # --- Storage (DigitalOcean Spaces) ---
       - DO_SPACES_KEY=${DO_SPACES_KEY}
       - DO_SPACES_SECRET=${DO_SPACES_SECRET}
       - DO_SPACES_ENDPOINT=${DO_SPACES_ENDPOINT}
       - DO_SPACES_BUCKET=${DO_SPACES_BUCKET}
       - DO_SPACES_CDN=${DO_SPACES_CDN}
 
-      # Email & Auth Keys
+      # --- Email (Resend) ---
       - RESEND_API_KEY=${RESEND_API_KEY}
       - EMAIL_FROM=${EMAIL_FROM}
+
+      # --- Google Login ---
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
 
     networks:
       - coolify
 
-    # 👇 THIS SECTION FIXES THE DOMAIN (shaikyakoub.com)
+    # --- Traefik (Domain Routing) ---
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.structura-app.rule=Host(`shaikyakoub.com`)"
