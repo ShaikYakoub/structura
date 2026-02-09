@@ -7,8 +7,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # These use the variables you set in Coolify Dashboard
       - DATABASE_URL=${DATABASE_URL}
       - NEXTAUTH_URL=https://shaikyakoub.com
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - NODE_ENV=production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.structura-custom.rule=Host(`shaikyakoub.com`)"
+      - "traefik.http.routers.structura-custom.entrypoints=websecure"
+      - "traefik.http.routers.structura-custom.tls.certresolver=letsencrypt"
+      - "traefik.http.services.structura-custom.loadbalancer.server.port=3000"
