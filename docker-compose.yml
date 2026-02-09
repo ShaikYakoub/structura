@@ -1,48 +1,14 @@
-version: "3.8"
-
+version: '3.8'
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: structura-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: structura
-      POSTGRES_PASSWORD: structura_dev_password
-      POSTGRES_DB: structura
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U structura"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: structura-app
-    restart: unless-stopped
+    build: .
+    restart: always
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgres://postgres:rxJfdTsBwFOwwyDbkB2cRpT7OPtwG304hRCQh2TVgG6DoJlR4JcIyCNe1NEPdN59@cggosgss8gow4ok0048gggc8:5432/postgres
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.structura-app.rule=Host(`shaikyakoub.com`)"
-      - "traefik.http.routers.structura-app.entrypoints=websecure"
-      - "traefik.http.routers.structura-app.tls.certresolver=letsencrypt"
-      - "traefik.http.services.structura-app.loadbalancer.server.port=3000"
-      NODE_ENV: production
-      AUTH_SECRET: super-secret-key-change-this-to-random-string-in-production-use-openssl-rand-base64-32
-      NEXTAUTH_URL: http://localhost:3000
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: sh -c "node_modules/.bin/prisma migrate deploy && node server.js"
-
-volumes:
-  postgres_data:
-    driver: local
+      # These use the variables you set in Coolify Dashboard
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_URL=https://shaikyakoub.com
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NODE_ENV=production
