@@ -28,7 +28,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://structura:structura_dev_password@postgres:5432/structura
+      DATABASE_URL: postgres://postgres:rxJfdTsBwFOwwyDbkB2cRpT7OPtwG304hRCQh2TVgG6DoJlR4JcIyCNe1NEPdN59@cggosgss8gow4ok0048gggc8:5432/postgres
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.structura-app.rule=Host(`shaikyakoub.com`)"
