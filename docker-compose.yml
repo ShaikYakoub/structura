@@ -29,6 +29,12 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://structura:structura_dev_password@postgres:5432/structura
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.structura-app.rule=Host(`shaikyakoub.com`)"
+      - "traefik.http.routers.structura-app.entrypoints=websecure"
+      - "traefik.http.routers.structura-app.tls.certresolver=letsencrypt"
+      - "traefik.http.services.structura-app.loadbalancer.server.port=3000"
       NODE_ENV: production
       AUTH_SECRET: super-secret-key-change-this-to-random-string-in-production-use-openssl-rand-base64-32
       NEXTAUTH_URL: http://localhost:3000
