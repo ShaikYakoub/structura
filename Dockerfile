@@ -1,10 +1,10 @@
 # Stage 1: Dependencies
 FROM node:20-alpine AS deps
-RUN apk add --no-cache libc6-compat gcc g++ make python3 git
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps
+RUN npm install --legacy-peer-deps
 
 # Stage 2: Builder
 FROM node:20-alpine AS builder
