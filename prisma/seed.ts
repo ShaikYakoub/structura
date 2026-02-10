@@ -44,6 +44,42 @@ async function main() {
       description: "Fresh artisan bread and pastries made daily",
       tenantId: tenant.id,
       isPublished: true,
+    },
+  });
+
+  console.log("✓ Created site:", bakerySite.name);
+
+  // Create Gym Site
+  const gymSite = await prisma.site.upsert({
+    where: { subdomain: "gym" },
+    update: {},
+    create: {
+      name: "Gym",
+      subdomain: "gym",
+      description: "Transform your body and mind with expert training",
+      tenantId: tenant.id,
+      isPublished: true,
+    },
+  });
+
+  console.log("✓ Created site:", gymSite.name);
+
+  // Create Bakery Home Page
+  await prisma.page.upsert({
+    where: {
+      siteId_slug: {
+        siteId: bakerySite.id,
+        slug: "/",
+      },
+    },
+    update: {},
+    create: {
+      name: "Home",
+      slug: "/",
+      path: "/",
+      siteId: bakerySite.id,
+      isPublished: true,
+      isHomePage: true,
       content: {
         sections: [
           {
@@ -94,18 +130,77 @@ async function main() {
     },
   });
 
-  console.log("✓ Created site:", bakerySite.name);
-
-  // Create Gym Site
-  const gymSite = await prisma.site.upsert({
-    where: { subdomain: "gym" },
+  // Create Bakery About Page
+  await prisma.page.upsert({
+    where: {
+      siteId_slug: {
+        siteId: bakerySite.id,
+        slug: "about",
+      },
+    },
     update: {},
     create: {
-      name: "Gym",
-      subdomain: "gym",
-      description: "Transform your body and mind with expert training",
-      tenantId: tenant.id,
+      name: "About Us",
+      slug: "about",
+      path: "/about",
+      siteId: bakerySite.id,
       isPublished: true,
+      isHomePage: false,
+      content: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Our Story",
+              subtitle: "Four generations of baking excellence",
+              image:
+                "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "Our Values",
+              features: [
+                {
+                  title: "Tradition",
+                  description:
+                    "We honor time-tested baking methods passed down through our family",
+                },
+                {
+                  title: "Quality",
+                  description:
+                    "Only the finest ingredients make it into our kitchen",
+                },
+                {
+                  title: "Community",
+                  description:
+                    "We're proud to serve our neighbors with delicious baked goods",
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  // Create Gym Home Page
+  await prisma.page.upsert({
+    where: {
+      siteId_slug: {
+        siteId: gymSite.id,
+        slug: "/",
+      },
+    },
+    update: {},
+    create: {
+      name: "Home",
+      slug: "/",
+      path: "/",
+      siteId: gymSite.id,
+      isPublished: true,
+      isHomePage: true,
       content: {
         sections: [
           {
@@ -153,41 +248,55 @@ async function main() {
     },
   });
 
-  console.log("✓ Created site:", gymSite.name);
-
-  // Create sample pages for Bakery
-  await prisma.page.upsert({
-    where: {
-      siteId_slug: {
-        siteId: bakerySite.id,
-        slug: "home",
-      },
-    },
-    update: {},
-    create: {
-      title: "Welcome to Our Bakery",
-      slug: "home",
-      content: "Fresh bread and pastries baked daily!",
-      siteId: bakerySite.id,
-      isPublished: true,
-    },
-  });
-
-  // Create sample pages for Gym
+  // Create Gym About Page
   await prisma.page.upsert({
     where: {
       siteId_slug: {
         siteId: gymSite.id,
-        slug: "home",
+        slug: "about",
       },
     },
     update: {},
     create: {
-      title: "Welcome to Our Gym",
-      slug: "home",
-      content: "Transform your body, transform your life!",
+      name: "About Us",
+      slug: "about",
+      path: "/about",
       siteId: gymSite.id,
       isPublished: true,
+      isHomePage: false,
+      content: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Our Mission",
+              subtitle: "Empowering communities through fitness",
+              image:
+                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "What We Offer",
+              features: [
+                {
+                  title: "Personalized Training",
+                  description: "Custom workout plans tailored to your goals",
+                },
+                {
+                  title: "Nutritional Guidance",
+                  description: "Expert advice on meal planning and supplements",
+                },
+                {
+                  title: "Supportive Community",
+                  description: "Join a motivated group of fitness enthusiasts",
+                },
+              ],
+            },
+          },
+        ],
+      },
     },
   });
 

@@ -16,11 +16,22 @@ export default async function EditorPage({ params }: EditorPageProps) {
 
   const site = await prisma.site.findUnique({
     where: { id },
+    include: {
+      pages: {
+        orderBy: [
+          { isHomePage: "desc" }, // Home page first
+          { createdAt: "asc" },
+        ],
+      },
+    },
   });
 
   if (!site || site.tenantId !== tenantId) {
     notFound();
   }
 
-  return <VisualEditor site={site} />;
+  // Get the first page (home page)
+  const initialPage = site.pages[0] || null;
+
+  return <VisualEditor site={site} initialPage={initialPage} />;
 }
