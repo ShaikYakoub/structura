@@ -1,47 +1,105 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+// Your main domain configuration
+const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "shaikyakoub.com";
+const APP_SUBDOMAIN = process.env.NEXT_PUBLIC_APP_SUBDOMAIN || "app";
 
 export const config = {
   matcher: [
     /*
-     * Match all paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     * - api routes
+     * Match all paths except for:
+     * 1. /api routes
+     * 2. /_next (Next.js internals)
+     * 3. /_static (inside /public)
+     * 4. /_vercel (Vercel internals)
+     * 5. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\..*|api).*)",
+    "/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
   ],
 };
 
-export function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
+  const searchParams = url.searchParams.toString();
+  const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
+
+  // Get the pathname (e.g. /, /about, /blog/first-post)
   const pathname = url.pathname;
 
-  // Skip rewrite for paths that already have correct structure
+  // Normalize hostname (remove www, handle ports for local dev)
+  const normalizedHostname = hostname
+    .replace(/^www\./, "")
+    .replace(/:\d+$/, ""); // Remove port for local dev
+
+  console.log("🔍 Middleware:", {
+    hostname,
+    normalizedHostname,
+    pathname,
+    appDomain: APP_DOMAIN,
+  });
+
+  // 1. Handle App Dashboard (app.shaikyakoub.com)
+  if (normalizedHostname === `${APP_SUBDOMAIN}.${APP_DOMAIN}`) {
+    console.log("📱 Routing to: /app");
+    return NextResponse.rewrite(new URL(`/app${path}`, req.url));
+  }
+
+  // 2. Handle Root Marketing Site (shaikyakoub.com)
+  if (normalizedHostname === APP_DOMAIN) {
+    console.log("🏠 Routing to: /home");
+    return NextResponse.rewrite(new URL(`/home${path}`, req.url));
+  }
+
+  // 3. Handle Localhost for Development
   if (
-    pathname.startsWith("/app") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/site")
+    hostname.includes("localhost") ||
+    hostname.includes("127.0.0.1")
   ) {
-    return NextResponse.next();
+    // Extract subdomain from localhost:3000 format
+    // For local testing: test-site.localhost:3000
+    const parts = hostname.split(".");
+    
+    if (parts.length > 1 && parts[0] !== "localhost") {
+      const subdomain = parts[0];
+      console.log("🧪 Local subdomain routing:", subdomain);
+      
+      // Rewrite to _sites/[site]
+      return NextResponse.rewrite(
+        new URL(`/_sites/${subdomain}${path}`, req.url)
+      );
+    }
+
+    // Default localhost to app dashboard
+    return NextResponse.rewrite(new URL(`/app${path}`, req.url));
   }
 
-  // Extract subdomain
-  // localhost:3000 → null
-  // app.localhost:3000 → 'app'
-  // bakery.localhost:3000 → 'bakery'
-  const subdomain = hostname.split(".")[0].split(":")[0];
+  // 4. Handle User Sites (Subdomains or Custom Domains)
+  // Examples:
+  // - demo.shaikyakoub.com (subdomain)
+  // - customdomain.com (custom domain)
 
-  // Root domain or 'app' subdomain → Admin Dashboard
-  if (subdomain === "localhost" || subdomain === "app") {
-    return NextResponse.rewrite(new URL(`/app${pathname}`, req.url));
+  // Check if it's a subdomain of your platform
+  const isSubdomain = normalizedHostname.endsWith(`.${APP_DOMAIN}`) &&
+    normalizedHostname !== APP_DOMAIN &&
+    normalizedHostname !== `${APP_SUBDOMAIN}.${APP_DOMAIN}`;
+
+  if (isSubdomain) {
+    // Extract subdomain (e.g., "demo" from "demo.shaikyakoub.com")
+    const subdomain = normalizedHostname.replace(`.${APP_DOMAIN}`, "");
+    console.log("🌐 Subdomain site:", subdomain);
+
+    // Rewrite to _sites/[site]
+    return NextResponse.rewrite(
+      new URL(`/_sites/${subdomain}${path}`, req.url)
+    );
   }
 
-  // Any other subdomain → Client Site
+  // If we reach here, it's likely a custom domain
+  console.log("🔗 Custom domain:", normalizedHostname);
+  
+  // Rewrite to _sites/[site] using the full domain
   return NextResponse.rewrite(
-    new URL(`/site/${subdomain}${pathname}`, req.url),
+    new URL(`/_sites/${normalizedHostname}${path}`, req.url)
   );
 }
