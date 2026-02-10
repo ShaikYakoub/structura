@@ -1,26 +1,47 @@
-# Use the official lightweight Node.js image
-FROM node:18-alpine
-
-# Set the working directory
+# Stage 1: Dependencies
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# 1. Copy dependency files first (for better caching)
 COPY package.json package-lock.json* ./
-COPY prisma ./prisma/
+RUN npm ci
 
-# 2. Install dependencies AND generate Prisma Client
-# We do this as root so we have full write permissions
-RUN npm install
-RUN npx prisma generate
+# Stage 2: Builder
+FROM node:20-alpine AS builder
+WORKDIR /app
 
-# 3. Copy the rest of the application code
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# 4. Build the Next.js application
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build Next.js with standalone output
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-# 5. Expose the port (Coolify needs this)
+# Stage 3: Runner
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files from builder
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+USER nextjs
+
 EXPOSE 3000
 
-# 6. Start the application
-CMD ["npm", "start"]
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
