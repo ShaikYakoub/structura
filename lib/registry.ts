@@ -26,7 +26,8 @@ export type FieldType =
   | "url"
   | "select"
   | "image"
-  | "array";
+  | "array"
+  | "action-list";
 
 // Schema for a single field
 export interface FieldSchema {
@@ -64,25 +65,65 @@ export const componentRegistry: Record<string, RegistryEntry> = {
         title: {
           label: "Title",
           type: "text",
-          defaultValue: "Welcome to Our Site",
+          defaultValue: "Build Amazing Products Fast",
         },
         subtitle: {
           label: "Subtitle",
           type: "textarea",
-          defaultValue: "Your journey starts here",
+          defaultValue: "The all-in-one platform for modern teams to create, collaborate, and scale.",
         },
-        image: {
-          label: "Background Image",
+        actions: {
+          label: "Call-to-Action Buttons",
+          type: "action-list",
+          defaultValue: [
+            {
+              label: "Get Started",
+              href: "/signup",
+              variant: "default",
+            },
+            {
+              label: "Learn More",
+              href: "/features",
+              variant: "outline",
+            },
+          ],
+        },
+        imageUrl: {
+          label: "Hero Image",
           type: "image",
-          defaultValue:
-            "https://images.unsplash.com/photo-1557683316-973673baf926?w=800",
+          defaultValue: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200",
+        },
+        imagePosition: {
+          label: "Image Position",
+          type: "select",
+          defaultValue: "right",
+          options: ["left", "right"],
+        },
+        backgroundStyle: {
+          label: "Background Style",
+          type: "select",
+          defaultValue: "solid",
+          options: ["solid", "gradient"],
         },
       },
       defaultData: {
-        title: "Welcome to Our Site",
-        subtitle: "Your journey starts here",
-        image:
-          "https://images.unsplash.com/photo-1557683316-973673baf926?w=800",
+        title: "Build Amazing Products Fast",
+        subtitle: "The all-in-one platform for modern teams to create, collaborate, and scale.",
+        actions: [
+          {
+            label: "Get Started",
+            href: "/signup",
+            variant: "default",
+          },
+          {
+            label: "Learn More",
+            href: "/features",
+            variant: "outline",
+          },
+        ],
+        imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200",
+        imagePosition: "right",
+        backgroundStyle: "solid",
       },
     },
   },
@@ -136,7 +177,7 @@ export const componentRegistry: Record<string, RegistryEntry> = {
     component: CTASection,
     schema: {
       name: "Call to Action",
-      description: "Prominent call-to-action section with button",
+      description: "Prominent call-to-action section with multiple buttons",
       category: "marketing",
       fields: {
         title: {
@@ -147,31 +188,42 @@ export const componentRegistry: Record<string, RegistryEntry> = {
         subtitle: {
           label: "Subtitle",
           type: "textarea",
-          defaultValue: "Join thousands of satisfied customers today",
+          defaultValue: "Join thousands of satisfied customers today.",
         },
-        buttonText: {
-          label: "Button Text",
-          type: "text",
-          defaultValue: "Get Started",
+        actions: {
+          label: "Call-to-Action Buttons",
+          type: "action-list",
+          defaultValue: [
+            {
+              label: "Start Free Trial",
+              href: "/signup",
+              variant: "secondary",
+            },
+            {
+              label: "Contact Sales",
+              href: "/contact",
+              variant: "outline",
+            },
+          ],
         },
-        buttonLink: {
-          label: "Button Link",
-          type: "url",
-          defaultValue: "#",
-        },
-        variant: {
-          label: "Style",
+        backgroundStyle: {
+          label: "Background Style",
           type: "select",
-          defaultValue: "primary",
-          options: ["primary", "outline"],
+          defaultValue: "gradient",
+          options: ["solid", "gradient"],
         },
       },
       defaultData: {
         title: "Ready to Get Started?",
-        subtitle: "Join thousands of satisfied customers today",
-        buttonText: "Get Started",
-        buttonLink: "#",
-        variant: "primary",
+        subtitle: "Join thousands of satisfied customers today.",
+        actions: [
+          {
+            label: "Start Free Trial",
+            href: "/signup",
+            variant: "secondary",
+          },
+        ],
+        backgroundStyle: "gradient",
       },
     },
   },

@@ -1,16 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { nanoid } from "nanoid";
 import type { Site, Page } from "@prisma/client";
 import { Renderer } from "@/components/renderer";
 import { SectionEditor } from "@/components/section-editor";
 import { Button } from "@/components/ui/button";
 import { updatePageContent } from "@/lib/actions/pages";
+import { saveDraft } from "@/app/actions/publish";
 import { toast } from "sonner";
 import { Save, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { componentRegistry, getDefaultData } from "@/lib/registry";
 import { PageManager } from "@/components/editor/page-manager";
+import { LayerManager } from "@/components/editor/sidebar/layer-manager";
+import { ActionListInput } from "@/components/editor/inputs/action-list-input";
 
 interface VisualEditorProps {
   site: Site;
@@ -18,40 +22,82 @@ interface VisualEditorProps {
 }
 
 interface Section {
+  id: string;
   type: string;
   data: any;
+  visible?: boolean;
 }
 
 export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   const [currentPage, setCurrentPage] = useState<Page | null>(initialPage);
   const [sections, setSections] = useState<Section[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
 
   // Load sections when page changes
   useEffect(() => {
     if (currentPage) {
       const content = currentPage.draftContent as { sections: Section[] } | null;
-      setSections(content?.sections || []);
-      setSelectedIndex(null);
+      const loadedSections = content?.sections || [];
+      
+      // Ensure all sections have IDs
+      const sectionsWithIds = loadedSections.map(section => ({
+        ...section,
+        id: section.id || nanoid(),
+        visible: section.visible !== false,
+      }));
+      
+      setSections(sectionsWithIds);
+      setSelectedSectionId(undefined);
     }
   }, [currentPage?.id]);
 
-  const handleSectionUpdate = (index: number, updatedData: any) => {
-    const newSections = [...sections];
-    newSections[index] = { ...newSections[index], data: updatedData };
-    setSections(newSections);
+  const handleSectionUpdate = (id: string, updatedData: any) => {
+    setSections(prevSections =>
+      prevSections.map(section =>
+        section.id === id ? { ...section, data: updatedData } : section
+      )
+    );
   };
 
   const handleAddSection = (type: string) => {
     const defaultData = getDefaultData(type);
-    setSections([...sections, { type, data: defaultData }]);
-    setSelectedIndex(sections.length);
+    const newSection: Section = {
+      id: nanoid(),
+      type,
+      data: defaultData,
+      visible: true,
+    };
+    setSections(prevSections => [...prevSections, newSection]);
+    setSelectedSectionId(newSection.id);
   };
 
-  const handleDeleteSection = (index: number) => {
-    setSections(sections.filter((_, i) => i !== index));
-    setSelectedIndex(null);
+  const handleDeleteSection = (id: string) => {
+    setSections(prevSections => prevSections.filter(section => section.id !== id));
+    if (selectedSectionId === id) {
+      setSelectedSectionId(undefined);
+    }
+    toast.success("Section deleted");
+  };
+
+  const handleReorder = async (reorderedSections: Section[]) => {
+    setSections(reorderedSections);
+    
+    // Auto-save to draft
+    if (currentPage) {
+      await saveDraft(currentPage.id, { sections: reorderedSections });
+      toast.success("Section order updated");
+    }
+  };
+
+  const handleToggleVisibility = (id: string) => {
+    setSections(prevSections =>
+      prevSections.map(section =>
+        section.id === id
+          ? { ...section, visible: section.visible !== false ? false : true }
+          : section
+      )
+    );
   };
 
   const handleSave = async () => {
@@ -74,6 +120,8 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   const handlePageChange = (page: Page) => {
     setCurrentPage(page);
   };
+
+  const selectedSection = sections.find(s => s.id === selectedSectionId);
 
   // Get available component types from registry
   const availableComponents = Object.entries(componentRegistry).map(
@@ -120,93 +168,22 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden grid grid-cols-12 gap-0">
-        {/* Left Column - Controls */}
-        <div className="col-span-4 bg-gray-50 border-r border-gray-200 overflow-y-auto">
-          <div className="p-6 space-y-4">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold mb-3">Add Section</h2>
-              <div className="grid grid-cols-2 gap-2">
-                {availableComponents.map((comp) => (
-                  <Button
-                    key={comp.key}
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleAddSection(comp.key)}
-                    className="justify-start"
-                  >
-                    {comp.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <h2 className="text-lg font-semibold mb-3">Sections</h2>
-
-              {sections.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <p className="mb-4">No sections yet</p>
-                  <Button onClick={() => handleAddSection("hero")}>
-                    Add your first section
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {sections.map((section, index) => {
-                    const schema = componentRegistry[section.type]?.schema;
-                    return (
-                      <div
-                        key={index}
-                        onClick={() => setSelectedIndex(index)}
-                        className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                          selectedIndex === index
-                            ? "border-blue-500 bg-white shadow"
-                            : "border-gray-200 bg-white hover:border-gray-300"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium">
-                              {schema?.name || section.type}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {section.data.title || schema?.description}
-                            </p>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteSection(index);
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Section Editor */}
-            {selectedIndex !== null && sections[selectedIndex] && (
-              <div className="mt-6 border-t pt-4">
-                <SectionEditor
-                  section={sections[selectedIndex]}
-                  onChange={(data) => handleSectionUpdate(selectedIndex, data)}
-                />
-              </div>
-            )}
-          </div>
+      {/* Main Content - Three Column Layout */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Sidebar - Layer Manager */}
+        <div className="w-64 border-r bg-background overflow-y-auto">
+          <LayerManager
+            sections={sections}
+            onReorder={handleReorder}
+            onToggleVisibility={handleToggleVisibility}
+            onDelete={handleDeleteSection}
+            onSelectSection={setSelectedSectionId}
+            selectedSectionId={selectedSectionId}
+          />
         </div>
 
-        {/* Right Column - Canvas */}
-        <div className="col-span-8 bg-gray-100 overflow-y-auto p-8">
+        {/* Center - Canvas */}
+        <div className="flex-1 overflow-y-auto bg-gray-100 p-8">
           <div className="max-w-5xl mx-auto">
             <div className="bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200">
               {/* Browser Chrome */}
@@ -223,9 +200,68 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
 
               {/* Preview */}
               <div className="bg-white">
-                <Renderer sections={sections} />
+                {sections.filter(section => section.visible !== false).map((section) => {
+                  const Component = componentRegistry[section.type]?.component;
+                  if (!Component) return null;
+                  
+                  return (
+                    <div
+                      key={section.id}
+                      className={`${
+                        selectedSectionId === section.id
+                          ? "ring-2 ring-primary"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedSectionId(section.id)}
+                    >
+                      <Component {...section.data} />
+                    </div>
+                  );
+                })}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar - Properties Panel */}
+        <div className="w-80 border-l bg-background overflow-y-auto">
+          <div className="p-4">
+            {/* Add Section Button */}
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold mb-2">Add Section</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries(componentRegistry).map(([key, entry]) => (
+                  <Button
+                    key={key}
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAddSection(key)}
+                    className="justify-start text-xs"
+                  >
+                    <PlusCircle className="h-3 w-3 mr-1" />
+                    {entry.schema.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Section Properties */}
+            {selectedSection ? (
+              <div className="border-t pt-4">
+                <h3 className="text-lg font-semibold mb-4">
+                  {componentRegistry[selectedSection.type]?.schema?.name}
+                </h3>
+
+                <SectionEditor
+                  section={selectedSection}
+                  onChange={(data) => handleSectionUpdate(selectedSection.id, data)}
+                />
+              </div>
+            ) : (
+              <div className="border-t pt-4 text-center text-muted-foreground text-sm">
+                Select a section to edit its properties
+              </div>
+            )}
           </div>
         </div>
       </div>

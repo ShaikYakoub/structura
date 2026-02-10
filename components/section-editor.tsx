@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ImageUpload } from "@/components/editor/fields/image-upload";
+import { ActionListInput } from "@/components/editor/inputs/action-list-input";
 import { getSchema } from "@/lib/registry";
 import type { FieldSchema } from "@/lib/registry";
 
@@ -197,6 +198,14 @@ export function SectionEditor({ section, onChange }: SectionEditorProps) {
           <ImageUpload
             value={value || ""}
             onChange={(url) => handleChange(fieldKey, url)}
+            label={fieldSchema.label}
+          />
+        )}
+
+        {fieldSchema.type === "action-list" && (
+          <ActionListInput
+            value={value || []}
+            onChange={(newValue) => handleChange(fieldKey, newValue)}
             label={fieldSchema.label}
           />
         )}
