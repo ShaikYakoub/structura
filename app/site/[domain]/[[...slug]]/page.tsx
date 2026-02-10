@@ -34,10 +34,17 @@ export async function generateMetadata({
     where: {
       siteId: site.id,
       path: pagePath,
-      isPublished: true,
     },
-    select: { name: true },
+    select: { name: true, publishedContent: true },
   });
+
+  // Only show metadata if page is published
+  if (!page || !page.publishedContent) {
+    return {
+      title: `Coming Soon - ${site.name}`,
+      description: site.description || `Welcome to ${site.name}`,
+    };
+  }
 
   return {
     title: page ? `${page.name} - ${site.name}` : site.name,
@@ -65,7 +72,6 @@ export default async function SitePage({ params }: SitePageProps) {
     where: {
       siteId: site.id,
       path: pagePath,
-      isPublished: true,
     },
   });
 
@@ -73,8 +79,20 @@ export default async function SitePage({ params }: SitePageProps) {
     notFound();
   }
 
-  // Parse content JSON
-  const content = page.content as { sections: any[] } | null;
+  // Use publishedContent instead of draftContent for live site
+  if (!page.publishedContent) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900">Coming Soon</h1>
+          <p className="mt-2 text-gray-600">This page has not been published yet.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Parse publishedContent JSON
+  const content = page.publishedContent as { sections: any[] } | null;
   const sections = content?.sections || [];
 
   return <Renderer sections={sections} />;
