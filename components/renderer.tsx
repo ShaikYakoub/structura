@@ -1,5 +1,4 @@
-import { HeroSection } from "./sections/hero-section";
-import { FeaturesSection } from "./sections/features-section";
+import { getComponent } from "@/lib/registry";
 
 interface Section {
   type: string;
@@ -14,14 +13,14 @@ export function Renderer({ sections }: RendererProps) {
   return (
     <>
       {sections.map((section, index) => {
-        switch (section.type) {
-          case "hero":
-            return <HeroSection key={index} data={section.data} />;
-          case "features":
-            return <FeaturesSection key={index} data={section.data} />;
-          default:
-            return null;
+        const Component = getComponent(section.type);
+
+        if (!Component) {
+          console.warn(`Unknown component type: ${section.type}`);
+          return null;
         }
+
+        return <Component key={index} data={section.data} />;
       })}
     </>
   );

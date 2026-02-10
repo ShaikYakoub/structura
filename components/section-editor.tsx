@@ -5,6 +5,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ImageUpload } from "@/components/editor/fields/image-upload";
+import { getSchema } from "@/lib/registry";
+import type { FieldSchema } from "@/lib/registry";
 
 interface SectionEditorProps {
   section: {
@@ -15,133 +25,196 @@ interface SectionEditorProps {
 }
 
 export function SectionEditor({ section, onChange }: SectionEditorProps) {
+  const schema = getSchema(section.type);
+
+  if (!schema) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-sm text-gray-500">
+            Unknown component type: {section.type}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const handleChange = (field: string, value: any) => {
     onChange({ ...section.data, [field]: value });
   };
 
-  const handleFeatureChange = (index: number, field: string, value: string) => {
-    const newFeatures = [...section.data.features];
-    newFeatures[index] = { ...newFeatures[index], [field]: value };
-    onChange({ ...section.data, features: newFeatures });
+  const handleArrayItemChange = (
+    arrayField: string,
+    index: number,
+    itemField: string,
+    value: any,
+  ) => {
+    const newArray = [...section.data[arrayField]];
+    newArray[index] = { ...newArray[index], [itemField]: value };
+    onChange({ ...section.data, [arrayField]: newArray });
   };
 
-  const addFeature = () => {
-    const newFeatures = [
-      ...section.data.features,
-      { title: "New Feature", description: "Description" },
-    ];
-    onChange({ ...section.data, features: newFeatures });
+  const addArrayItem = (
+    arrayField: string,
+    itemSchema: Record<string, Omit<FieldSchema, "arrayItemSchema">>,
+  ) => {
+    const newItem: any = {};
+    Object.entries(itemSchema).forEach(([key, field]) => {
+      newItem[key] = field.defaultValue;
+    });
+    const newArray = [...(section.data[arrayField] || []), newItem];
+    onChange({ ...section.data, [arrayField]: newArray });
   };
 
-  const removeFeature = (index: number) => {
-    const newFeatures = section.data.features.filter(
+  const removeArrayItem = (arrayField: string, index: number) => {
+    const newArray = section.data[arrayField].filter(
       (_: any, i: number) => i !== index,
     );
-    onChange({ ...section.data, features: newFeatures });
+    onChange({ ...section.data, [arrayField]: newArray });
   };
 
-  if (section.type === "hero") {
+  const renderField = (fieldKey: string, fieldSchema: FieldSchema) => {
+    const value = section.data[fieldKey];
+
+    // Array field - render nested items
+    if (fieldSchema.type === "array" && fieldSchema.arrayItemSchema) {
+      return (
+        <div className="space-y-4" key={fieldKey}>
+          <div className="flex items-center justify-between">
+            <Label>{fieldSchema.label}</Label>
+            <Button
+              size="sm"
+              onClick={() =>
+                addArrayItem(fieldKey, fieldSchema.arrayItemSchema!)
+              }
+            >
+              Add Item
+            </Button>
+          </div>
+
+          {(value || []).map((item: any, index: number) => (
+            <Card key={index} className="p-4">
+              <div className="space-y-3">
+                {Object.entries(fieldSchema.arrayItemSchema!).map(
+                  ([itemFieldKey, itemFieldSchema]) => (
+                    <div key={itemFieldKey} className="space-y-2">
+                      <Label>{itemFieldSchema.label}</Label>
+                      {itemFieldSchema.type === "text" && (
+                        <Input
+                          value={item[itemFieldKey] || ""}
+                          onChange={(e) =>
+                            handleArrayItemChange(
+                              fieldKey,
+                              index,
+                              itemFieldKey,
+                              e.target.value,
+                            )
+                          }
+                        />
+                      )}
+                      {itemFieldSchema.type === "textarea" && (
+                        <Textarea
+                          value={item[itemFieldKey] || ""}
+                          onChange={(e) =>
+                            handleArrayItemChange(
+                              fieldKey,
+                              index,
+                              itemFieldKey,
+                              e.target.value,
+                            )
+                          }
+                          rows={2}
+                        />
+                      )}
+                    </div>
+                  ),
+                )}
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => removeArrayItem(fieldKey, index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+
+    // Regular fields
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Hero Section</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="hero-title">Title</Label>
-            <Input
-              id="hero-title"
-              value={section.data.title}
-              onChange={(e) => handleChange("title", e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="hero-subtitle">Subtitle</Label>
-            <Textarea
-              id="hero-subtitle"
-              value={section.data.subtitle}
-              onChange={(e) => handleChange("subtitle", e.target.value)}
-              rows={3}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="hero-image">Image URL</Label>
-            <Input
-              id="hero-image"
-              value={section.data.image}
-              onChange={(e) => handleChange("image", e.target.value)}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-2" key={fieldKey}>
+        <Label htmlFor={`field-${fieldKey}`}>{fieldSchema.label}</Label>
+
+        {fieldSchema.type === "text" && (
+          <Input
+            id={`field-${fieldKey}`}
+            value={value || ""}
+            onChange={(e) => handleChange(fieldKey, e.target.value)}
+          />
+        )}
+
+        {fieldSchema.type === "textarea" && (
+          <Textarea
+            id={`field-${fieldKey}`}
+            value={value || ""}
+            onChange={(e) => handleChange(fieldKey, e.target.value)}
+            rows={3}
+          />
+        )}
+
+        {fieldSchema.type === "url" && (
+          <Input
+            id={`field-${fieldKey}`}
+            type="url"
+            value={value || ""}
+            onChange={(e) => handleChange(fieldKey, e.target.value)}
+            placeholder="https://..."
+          />
+        )}
+
+        {fieldSchema.type === "select" && fieldSchema.options && (
+          <Select
+            value={value || fieldSchema.defaultValue}
+            onValueChange={(newValue) => handleChange(fieldKey, newValue)}
+          >
+            <SelectTrigger id={`field-${fieldKey}`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {fieldSchema.options.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
+        {fieldSchema.type === "image" && (
+          <ImageUpload
+            value={value || ""}
+            onChange={(url) => handleChange(fieldKey, url)}
+            label={fieldSchema.label}
+          />
+        )}
+      </div>
     );
-  }
+  };
 
-  if (section.type === "features") {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Features Section</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="features-title">Section Title</Label>
-            <Input
-              id="features-title"
-              value={section.data.title}
-              onChange={(e) => handleChange("title", e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-4 mt-6">
-            <div className="flex items-center justify-between">
-              <Label>Features</Label>
-              <Button size="sm" onClick={addFeature}>
-                Add Feature
-              </Button>
-            </div>
-
-            {section.data.features.map((feature: any, index: number) => (
-              <Card key={index} className="p-4">
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label>Title</Label>
-                    <Input
-                      value={feature.title}
-                      onChange={(e) =>
-                        handleFeatureChange(index, "title", e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Description</Label>
-                    <Textarea
-                      value={feature.description}
-                      onChange={(e) =>
-                        handleFeatureChange(
-                          index,
-                          "description",
-                          e.target.value,
-                        )
-                      }
-                      rows={2}
-                    />
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => removeFeature(index)}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return null;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{schema.name}</CardTitle>
+        <p className="text-sm text-gray-500">{schema.description}</p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {Object.entries(schema.fields).map(([fieldKey, fieldSchema]) =>
+          renderField(fieldKey, fieldSchema),
+        )}
+      </CardContent>
+    </Card>
+  );
 }

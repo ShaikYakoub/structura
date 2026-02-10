@@ -9,6 +9,7 @@ import { updateSite } from "@/lib/actions";
 import { toast } from "sonner";
 import { PlusCircle, Save } from "lucide-react";
 import Link from "next/link";
+import { componentRegistry, getDefaultData } from "@/lib/registry";
 
 interface VisualEditorProps {
   site: Site;
@@ -18,28 +19,6 @@ interface Section {
   type: string;
   data: any;
 }
-
-const DEFAULT_SECTIONS: Record<string, Section> = {
-  hero: {
-    type: "hero",
-    data: {
-      title: "New Hero Section",
-      subtitle: "Add your subtitle here",
-      image: "https://images.unsplash.com/photo-1557683316-973673baf926?w=800",
-    },
-  },
-  features: {
-    type: "features",
-    data: {
-      title: "Features",
-      features: [
-        { title: "Feature 1", description: "Description here" },
-        { title: "Feature 2", description: "Description here" },
-        { title: "Feature 3", description: "Description here" },
-      ],
-    },
-  },
-};
 
 export function VisualEditor({ site }: VisualEditorProps) {
   const initialContent = site.content as { sections: Section[] } | null;
@@ -56,7 +35,8 @@ export function VisualEditor({ site }: VisualEditorProps) {
   };
 
   const handleAddSection = (type: string) => {
-    setSections([...sections, DEFAULT_SECTIONS[type]]);
+    const defaultData = getDefaultData(type);
+    setSections([...sections, { type, data: defaultData }]);
     setSelectedIndex(sections.length);
   };
 
@@ -80,7 +60,14 @@ export function VisualEditor({ site }: VisualEditorProps) {
       setSaving(false);
     }
   };
-
+  // Get available component types from registry
+  const availableComponents = Object.entries(componentRegistry).map(
+    ([key, entry]) => ({
+      key,
+      name: entry.schema.name,
+      category: entry.schema.category,
+    }),
+  );
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
@@ -105,70 +92,74 @@ export function VisualEditor({ site }: VisualEditorProps) {
         {/* Left Column - Controls */}
         <div className="col-span-4 bg-gray-50 border-r border-gray-200 overflow-y-auto">
           <div className="p-6 space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Sections</h2>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleAddSection("hero")}
-                >
-                  <PlusCircle className="w-4 h-4 mr-1" />
-                  Hero
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleAddSection("features")}
-                >
-                  <PlusCircle className="w-4 h-4 mr-1" />
-                  Features
-                </Button>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold mb-3">Add Section</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {availableComponents.map((comp) => (
+                  <Button
+                    key={comp.key}
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleAddSection(comp.key)}
+                    className="justify-start"
+                  >
+                    <PlusCircle className="w-4 h-4 mr-1" />
+                    {comp.name}
+                  </Button>
+                ))}
               </div>
             </div>
 
-            {sections.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <p className="mb-4">No sections yet</p>
-                <Button onClick={() => handleAddSection("hero")}>
-                  Add your first section
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {sections.map((section, index) => (
-                  <div
-                    key={index}
-                    onClick={() => setSelectedIndex(index)}
-                    className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                      selectedIndex === index
-                        ? "border-blue-500 bg-white shadow"
-                        : "border-gray-200 bg-white hover:border-gray-300"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium capitalize">{section.type}</p>
-                        <p className="text-xs text-gray-500">
-                          {section.type === "hero" && section.data.title}
-                          {section.type === "features" && section.data.title}
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteSection(index);
-                        }}
+            <div className="border-t pt-4">
+              <h2 className="text-lg font-semibold mb-3">Sections</h2>
+
+              {sections.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <p className="mb-4">No sections yet</p>
+                  <Button onClick={() => handleAddSection("hero")}>
+                    Add your first section
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {sections.map((section, index) => {
+                    const schema = componentRegistry[section.type]?.schema;
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => setSelectedIndex(index)}
+                        className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                          selectedIndex === index
+                            ? "border-blue-500 bg-white shadow"
+                            : "border-gray-200 bg-white hover:border-gray-300"
+                        }`}
                       >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">
+                              {schema?.name || section.type}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {section.data.title || schema?.description}
+                            </p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteSection(index);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             {/* Section Editor */}
             {selectedIndex !== null && sections[selectedIndex] && (

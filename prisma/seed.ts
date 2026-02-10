@@ -79,6 +79,16 @@ async function main() {
               ],
             },
           },
+          {
+            type: "cta",
+            data: {
+              title: "Visit Us Today",
+              subtitle: "Experience the taste of fresh artisan baking",
+              buttonText: "View Menu",
+              buttonLink: "#menu",
+              variant: "primary",
+            },
+          },
         ],
       },
     },
@@ -126,6 +136,16 @@ async function main() {
                   description: "Yoga, spinning, HIIT and more",
                 },
               ],
+            },
+          },
+          {
+            type: "cta",
+            data: {
+              title: "Start Your Transformation",
+              subtitle: "Join today and get your first month at 50% off",
+              buttonText: "Get Started",
+              buttonLink: "#pricing",
+              variant: "primary",
             },
           },
         ],
