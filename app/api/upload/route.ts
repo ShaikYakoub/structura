@@ -4,6 +4,7 @@ import {
   generatePresignedUrl,
   generateUniqueFilename,
   getPublicUrl,
+  isS3Configured,
 } from "@/lib/s3";
 
 export async function POST(request: NextRequest) {
@@ -12,6 +13,17 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Check if S3 is configured
+    if (!isS3Configured()) {
+      return NextResponse.json(
+        { 
+          error: "Image uploads not configured. Please add DigitalOcean Spaces credentials to your .env file.",
+          details: "Missing: DO_SPACES_KEY, DO_SPACES_SECRET, DO_SPACES_ENDPOINT, DO_SPACES_BUCKET"
+        },
+        { status: 503 }
+      );
     }
 
     const { filename, contentType } = await request.json();

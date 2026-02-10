@@ -8,6 +8,20 @@ const nextConfig: NextConfig = {
   
   // Disable powered by header for security
   poweredByHeader: false,
+  
+  // Configure external image domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.digitaloceanspaces.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

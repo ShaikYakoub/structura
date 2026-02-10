@@ -44,6 +44,20 @@ async function main() {
       description: "Fresh artisan bread and pastries made daily",
       tenantId: tenant.id,
       isPublished: true,
+      navigation: [
+        { label: "Home", href: "/", type: "page" },
+        { label: "About", href: "/about", type: "page" },
+      ],
+      styles: {
+        primary: "#d97706",
+        background: "#ffffff",
+        foreground: "#000000",
+        muted: "#f1f5f9",
+        mutedForeground: "#64748b",
+        fontHeading: "Playfair Display",
+        fontBody: "Inter",
+        radius: "0.5",
+      },
     },
   });
 
@@ -59,6 +73,20 @@ async function main() {
       description: "Transform your body and mind with expert training",
       tenantId: tenant.id,
       isPublished: true,
+      navigation: [
+        { label: "Home", href: "/", type: "page" },
+        { label: "About", href: "/about", type: "page" },
+      ],
+      styles: {
+        primary: "#dc2626",
+        background: "#ffffff",
+        foreground: "#000000",
+        muted: "#f1f5f9",
+        mutedForeground: "#64748b",
+        fontHeading: "Montserrat",
+        fontBody: "Roboto",
+        radius: "0.25",
+      },
     },
   });
 

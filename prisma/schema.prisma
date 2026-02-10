@@ -77,6 +77,10 @@ model Site {
   name         String
   subdomain    String   @unique
   customDomain String?  @unique
+  logo         String?
+  navColor     String   @default("#ffffff")
+  navigation   Json     @default("[]")
+  styles       Json     @default("{\"primary\":\"#000000\",\"background\":\"#ffffff\",\"foreground\":\"#000000\",\"muted\":\"#f1f5f9\",\"mutedForeground\":\"#64748b\",\"fontHeading\":\"Inter\",\"fontBody\":\"Inter\",\"radius\":\"0.5\"}")
   tenantId     String   @db.Uuid
   isPublished  Boolean  @default(false)
   createdAt    DateTime @default(now())

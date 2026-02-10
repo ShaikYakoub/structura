@@ -10,31 +10,57 @@ function validateEnv() {
     "DO_SPACES_BUCKET",
   ];
 
-  for (const key of required) {
-    if (!process.env[key]) {
-      throw new Error(`Missing required environment variable: ${key}`);
-    }
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    throw new Error(
+      `DigitalOcean Spaces not configured. Missing environment variables: ${missing.join(", ")}. ` +
+      `Please add them to your .env file to enable image uploads.`
+    );
   }
 }
 
-validateEnv();
+// Check if S3 is configured (don't throw, just return boolean)
+export function isS3Configured(): boolean {
+  return !!(
+    process.env.DO_SPACES_KEY &&
+    process.env.DO_SPACES_SECRET &&
+    process.env.DO_SPACES_ENDPOINT &&
+    process.env.DO_SPACES_BUCKET
+  );
+}
 
-// Initialize S3 client for DigitalOcean Spaces
-export const s3Client = new S3Client({
-  endpoint: process.env.DO_SPACES_ENDPOINT,
-  region: "us-east-1", // DigitalOcean Spaces uses a fixed region
-  credentials: {
-    accessKeyId: process.env.DO_SPACES_KEY!,
-    secretAccessKey: process.env.DO_SPACES_SECRET!,
-  },
-});
+// Initialize S3 client lazily
+let s3ClientInstance: S3Client | null = null;
 
-export const BUCKET_NAME = process.env.DO_SPACES_BUCKET!;
+function getS3Client(): S3Client {
+  validateEnv();
+  
+  if (!s3ClientInstance) {
+    s3ClientInstance = new S3Client({
+      endpoint: process.env.DO_SPACES_ENDPOINT,
+      region: "us-east-1", // DigitalOcean Spaces uses a fixed region
+      credentials: {
+        accessKeyId: process.env.DO_SPACES_KEY!,
+        secretAccessKey: process.env.DO_SPACES_SECRET!,
+      },
+    });
+  }
+  
+  return s3ClientInstance;
+}
+
+function getBucketName(): string {
+  validateEnv();
+  return process.env.DO_SPACES_BUCKET!;
+}
 
 // Generate public URL for uploaded file
 export function getPublicUrl(key: string): string {
+  validateEnv();
   const endpoint = process.env.DO_SPACES_ENDPOINT!.replace("https://", "");
-  return `https://${BUCKET_NAME}.${endpoint}/${key}`;
+  const bucketName = getBucketName();
+  return `https://${bucketName}.${endpoint}/${key}`;
 }
 
 // Generate unique filename
@@ -48,14 +74,17 @@ export function generateUniqueFilename(originalName: string): string {
 // Generate presigned URL for upload
 export async function generatePresignedUrl(
   key: string,
-  contentType: string,
-): Promise<string> {
+  contentlient = getS3Client();
+  const bucketName = getBucketName();
+  
   const command = new PutObjectCommand({
-    Bucket: BUCKET_NAME,
+    Bucket: bucketName,
     Key: key,
     ContentType: contentType,
     ACL: "public-read",
   });
+
+  return getSignedUrl(c
 
   return getSignedUrl(s3Client, command, { expiresIn: 300 }); // 5 minutes
 }

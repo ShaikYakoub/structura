@@ -24,7 +24,6 @@ import {
   createPage,
   getSitePages,
   deletePage,
-  generateSlug,
 } from "@/lib/actions/pages";
 import { toast } from "sonner";
 import type { Page } from "@prisma/client";
@@ -71,7 +70,11 @@ export function PageManager({
   const handleNameChange = (name: string) => {
     setNewPageName(name);
     // Auto-generate slug from name
-    setNewPageSlug(generateSlug(name));
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    setNewPageSlug(slug);
   };
 
   const handleCreatePage = async () => {

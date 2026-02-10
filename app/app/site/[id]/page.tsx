@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { SiteEditor } from "@/components/site-editor";
+import { NavManager } from "@/components/editor/panels/nav-manager";
+import { ThemeSettings } from "@/components/editor/panels/theme-settings";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -18,6 +20,7 @@ export default async function SiteEditorPage({ params }: SiteEditorPageProps) {
 
   const site = await prisma.site.findUnique({
     where: { id },
+    include: { pages: true },
   });
 
   if (!site || site.tenantId !== tenantId) {
@@ -36,7 +39,22 @@ export default async function SiteEditorPage({ params }: SiteEditorPageProps) {
         </Link>
       </div>
 
-      <SiteEditor site={site} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <SiteEditor site={site} />
+        </div>
+        <div className="space-y-6">
+          <ThemeSettings
+            siteId={site.id}
+            currentStyles={typeof site.styles === 'object' && site.styles !== null ? site.styles : {}}
+          />
+          <NavManager
+            siteId={site.id}
+            currentNavigation={Array.isArray(site.navigation) ? site.navigation : []}
+            pages={site.pages}
+          />
+        </div>
+      </div>
     </div>
   );
 }

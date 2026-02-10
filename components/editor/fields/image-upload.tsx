@@ -31,7 +31,8 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get upload URL");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to get upload URL");
       }
 
       const { presignedUrl, publicUrl } = await response.json();
@@ -50,7 +51,8 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
       onChange(publicUrl);
     } catch (err) {
       console.error("Upload error:", err);
-      setError("Failed to upload image");
+      const errorMessage = err instanceof Error ? err.message : "Failed to upload image";
+      setError(errorMessage);
     } finally {
       setUploading(false);
     }

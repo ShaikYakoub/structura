@@ -10,8 +10,8 @@ function isValidSlug(slug: string): boolean {
   return /^[a-z0-9-]+$/.test(slug);
 }
 
-// Convert name to URL-safe slug
-export function generateSlug(name: string): string {
+// Convert name to URL-safe slug (internal helper)
+function generateSlug(name: string): string {
   return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
