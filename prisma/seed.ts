@@ -108,7 +108,7 @@ async function main() {
       siteId: bakerySite.id,
       isPublished: true,
       isHomePage: true,
-      content: {
+      draftContent: {
         sections: [
           {
             type: "hero",
@@ -155,6 +155,54 @@ async function main() {
           },
         ],
       },
+      publishedContent: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Fresh Artisan Bakery",
+              subtitle:
+                "Handcrafted bread and pastries baked fresh every morning",
+              image:
+                "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "Why Choose Us",
+              features: [
+                {
+                  title: "Fresh Daily",
+                  description:
+                    "Everything is baked fresh every morning using traditional methods",
+                },
+                {
+                  title: "Quality Ingredients",
+                  description:
+                    "We use only the finest organic flour and natural ingredients",
+                },
+                {
+                  title: "Family Recipes",
+                  description:
+                    "Time-tested recipes passed down through generations",
+                },
+              ],
+            },
+          },
+          {
+            type: "cta",
+            data: {
+              title: "Visit Us Today",
+              subtitle: "Experience the taste of fresh artisan baking",
+              buttonText: "View Menu",
+              buttonLink: "#menu",
+              variant: "primary",
+            },
+          },
+        ],
+      },
+      lastPublishedAt: new Date(),
     },
   });
 
@@ -174,7 +222,7 @@ async function main() {
       siteId: bakerySite.id,
       isPublished: true,
       isHomePage: false,
-      content: {
+      draftContent: {
         sections: [
           {
             type: "hero",
@@ -210,6 +258,43 @@ async function main() {
           },
         ],
       },
+      publishedContent: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Our Story",
+              subtitle: "Four generations of baking excellence",
+              image:
+                "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "Our Values",
+              features: [
+                {
+                  title: "Tradition",
+                  description:
+                    "We honor time-tested baking methods passed down through our family",
+                },
+                {
+                  title: "Quality",
+                  description:
+                    "Only the finest ingredients make it into our kitchen",
+                },
+                {
+                  title: "Community",
+                  description:
+                    "We're proud to serve our neighbors with delicious baked goods",
+                },
+              ],
+            },
+          },
+        ],
+      },
+      lastPublishedAt: new Date(),
     },
   });
 
@@ -229,7 +314,7 @@ async function main() {
       siteId: gymSite.id,
       isPublished: true,
       isHomePage: true,
-      content: {
+      draftContent: {
         sections: [
           {
             type: "hero",
@@ -273,13 +358,92 @@ async function main() {
           },
         ],
       },
-    },
-  });
-
-  // Create Gym About Page
-  await prisma.page.upsert({
-    where: {
-      siteId_slug: {
+      publishedContent: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Transform Your Life",
+              subtitle: "State-of-the-art fitness center with expert trainers",
+              image:
+                "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "Our Facilities",
+              features: [
+                {
+                  title: "Modern Equipment",
+                  description: "Latest cardio and strength training machines",
+      draftContent: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Our Mission",
+              subtitle: "Empowering communities through fitness",
+              image:
+                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "What We Offer",
+              features: [
+                {
+                  title: "Personalized Training",
+                  description: "Custom workout plans tailored to your goals",
+                },
+                {
+                  title: "Nutritional Guidance",
+                  description: "Expert advice on meal planning and supplements",
+                },
+                {
+                  title: "Supportive Community",
+                  description: "Join a motivated group of fitness enthusiasts",
+                },
+              ],
+            },
+          },
+        ],
+      },
+      publishedContent: {
+        sections: [
+          {
+            type: "hero",
+            data: {
+              title: "Our Mission",
+              subtitle: "Empowering communities through fitness",
+              image:
+                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200",
+            },
+          },
+          {
+            type: "features",
+            data: {
+              title: "What We Offer",
+              features: [
+                {
+                  title: "Personalized Training",
+                  description: "Custom workout plans tailored to your goals",
+                },
+                {
+                  title: "Nutritional Guidance",
+                  description: "Expert advice on meal planning and supplements",
+                },
+                {
+                  title: "Supportive Community",
+                  description: "Join a motivated group of fitness enthusiasts",
+                },
+              ],
+            },
+          },
+        ],
+      },
+      lastPublishedAt: new Date()iteId_slug: {
         siteId: gymSite.id,
         slug: "about",
       },

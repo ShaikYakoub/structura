@@ -31,7 +31,7 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   // Load sections when page changes
   useEffect(() => {
     if (currentPage) {
-      const content = currentPage.content as { sections: Section[] } | null;
+      const content = currentPage.draftContent as { sections: Section[] } | null;
       setSections(content?.sections || []);
       setSelectedIndex(null);
     }

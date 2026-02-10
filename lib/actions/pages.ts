@@ -67,7 +67,7 @@ export async function createPage(siteId: string, name: string, slug: string) {
       slug,
       path,
       siteId,
-      content: { sections: [] },
+      draftContent: { sections: [] },
       isPublished: false,
       isHomePage: slug === "/" || slug === "",
     },
@@ -149,7 +149,7 @@ export async function updatePageContent(pageId: string, content: any) {
   await prisma.page.update({
     where: { id: pageId },
     data: {
-      content,
+      draftContent: content,
       updatedAt: new Date(),
     },
   });
