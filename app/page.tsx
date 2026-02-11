@@ -9,16 +9,18 @@ import { SupportBubble } from "@/components/marketing/support-bubble";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
       {/* Spacer for fixed navbar */}
       <div className="h-16" aria-hidden="true" />
-      <main>
-        <Hero />
-        <Features />
-        <Showcase />
-        <Pricing />
-        <CTA />
+      <main className="px-4 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
+        <div className="max-w-7xl mx-auto">
+          <Hero />
+          <Features />
+          <Showcase />
+          <Pricing />
+          <CTA />
+        </div>
       </main>
       <Footer />
       <SupportBubble />

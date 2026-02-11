@@ -50,20 +50,12 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <AnimatedButton
-              variant="ghost"
-              asChild
-              animationType="none"
-              className="border-2"
-            >
-              <Link href="/login">Login</Link>
-            </AnimatedButton>
+          {/* CTA Button */}
+          <div className="hidden md:flex items-center">
             <AnimatedButton
               asChild
               animationType="none"
-              className="border-2"
+              className="bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white border-2"
             >
               <Link href="/register">Get Started</Link>
             </AnimatedButton>
@@ -106,17 +98,9 @@ export function Navbar() {
             </Link>
             <div className="flex flex-col gap-2 pt-4">
               <AnimatedButton
-                variant="outline"
                 asChild
                 animationType="none"
-                className="w-full border-2"
-              >
-                <Link href="/login">Login</Link>
-              </AnimatedButton>
-              <AnimatedButton
-                asChild
-                animationType="none"
-                className="w-full border-2"
+                className="w-full bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white border-2"
               >
                 <Link href="/register">Get Started</Link>
               </AnimatedButton>

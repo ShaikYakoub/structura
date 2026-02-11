@@ -4,7 +4,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, X, Mail, MessageCircle } from "lucide-react";
+import {
+  HelpCircle,
+  X,
+  Mail,
+  MessageCircle,
+  Phone,
+  MessageSquare,
+  Send,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -46,7 +54,35 @@ export function SupportBubble() {
             >
               <a href="mailto:support@structura.com">
                 <Mail className="mr-2 h-4 w-4" />
-                Email Support
+                Email Us
+              </a>
+            </AnimatedButton>
+
+            <AnimatedButton
+              variant="outline"
+              animationType="bounce"
+              className="w-full justify-start border-2"
+              asChild
+            >
+              <a
+                href="https://wa.me/1234567890"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Send className="mr-2 h-4 w-4" />
+                WhatsApp Chat
+              </a>
+            </AnimatedButton>
+
+            <AnimatedButton
+              variant="outline"
+              animationType="bounce"
+              className="w-full justify-start border-2"
+              asChild
+            >
+              <a href="tel:+1234567890">
+                <Phone className="mr-2 h-4 w-4" />
+                Call Us
               </a>
             </AnimatedButton>
 

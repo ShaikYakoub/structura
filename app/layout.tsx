@@ -22,14 +22,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Structura" }],
   creator: "Structura",
-  
+
   // Icons
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
     apple: "/apple-touch-icon.png",
   },
-  
+
   // Open Graph
   openGraph: {
     type: "website",
@@ -48,17 +48,16 @@ export const metadata: Metadata = {
       },
     ],
   },
-  
+
   // Twitter Card
   twitter: {
     card: "summary_large_image",
     title: "Structura - Build Websites in Minutes",
-    description:
-      "The most powerful website builder for startups and creators.",
+    description: "The most powerful website builder for startups and creators.",
     images: ["https://structura.com/og-image.jpg"],
     creator: "@structura",
   },
-  
+
   // Additional
   robots: {
     index: true,
@@ -71,7 +70,7 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  
+
   verification: {
     google: "your-google-verification-code",
     // yandex: "your-yandex-verification-code",
@@ -84,8 +83,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
+      <body className={`${inter.className} overflow-x-hidden`}>
         {children}
         <Toaster position="top-center" />
       </body>

@@ -98,7 +98,6 @@ export function Pricing() {
                   ${plan.popular ? "border-primary shadow-lg scale-105" : ""}
                 `}
               >
-
                 <CardHeader className="text-center pb-8 pt-8">
                   <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
@@ -126,9 +125,9 @@ export function Pricing() {
                   <AnimatedButton
                     asChild
                     animationType="bounce"
-                    className="w-full border-2"
+                    className={`w-full border-2 ${plan.popular ? "bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white" : ""}`}
                     size="lg"
-                    variant={plan.popular ? "default" : "outline"}
+                    variant={plan.popular ? "secondary" : "outline"}
                   >
                     <Link href="/register">{plan.cta}</Link>
                   </AnimatedButton>
@@ -143,7 +142,7 @@ export function Pricing() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-8 text-sm text-muted-foreground"
+          className="text-center mt-12 text-sm text-muted-foreground"
         >
           All plans include 7-day money-back guarantee • No credit card required
           for free plan

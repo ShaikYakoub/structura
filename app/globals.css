@@ -88,6 +88,16 @@ button.transition-all:hover {
   .editor-canvas {
     overscroll-behavior-y: contain;
   }
+
+  /* Hide scrollbars on mobile to prevent accidental horizontal scrolling */
+  * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  *::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 }
 
 /* Device frame scaling */

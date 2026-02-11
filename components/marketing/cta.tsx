@@ -2,7 +2,7 @@
 
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 
 export function CTA() {
@@ -22,27 +22,28 @@ export function CTA() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <AnimatedButton
                 size="lg"
-                variant="secondary"
-                asChild
-                animationType="bounce"
-                className="border-2"
-              >
-                <Link href="/register">
-                  Start Building for Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </AnimatedButton>
-              <AnimatedButton
-                size="lg"
                 variant="outline"
                 animationType="bounce"
-                className="bg-transparent border-2 border-white text-white hover:bg-white/10"
+                className="border-2"
                 onClick={() => {
                   const element = document.getElementById("showcase");
                   element?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
+                <Play className="mr-2 h-5 w-5" />
                 View Templates
+              </AnimatedButton>
+              <AnimatedButton
+                size="lg"
+                variant="secondary"
+                asChild
+                animationType="bounce"
+                className="border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white"
+              >
+                <Link href="/register">
+                  Start Building for Free
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </AnimatedButton>
             </div>
             <p className="text-sm mt-6 opacity-75">
