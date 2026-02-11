@@ -5,9 +5,9 @@ import { StyleInjector } from "@/components/site/style-injector";
 
 interface SiteLayoutProps {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     domain: string;
-  };
+  }>;
 }
 
 async function getSiteData(domain: string) {
@@ -28,7 +28,8 @@ async function getSiteData(domain: string) {
   return site;
 }
 
-export default async function SiteLayout({ children, params }: SiteLayoutProps) {
+export default async function SiteLayout({ children, params: paramsPromise }: SiteLayoutProps) {
+  const params = await paramsPromise;
   const site = await getSiteData(params.domain);
 
   if (!site) {
@@ -36,9 +37,9 @@ export default async function SiteLayout({ children, params }: SiteLayoutProps) 
   }
 
   // Parse navigation JSON
-  const navigationData = Array.isArray(site.navigation) 
+  const navigationData = (Array.isArray(site.navigation) 
     ? site.navigation 
-    : [];
+    : []) as any[];
 
   // Parse styles JSON
   const stylesData = typeof site.styles === 'object' && site.styles !== null

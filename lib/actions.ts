@@ -34,7 +34,7 @@ export async function updateSite(siteId: string, data: UpdateSiteData) {
     data: {
       name: data.name,
       description: data.description,
-      content: data.content,
+
       updatedAt: new Date(),
     },
   });

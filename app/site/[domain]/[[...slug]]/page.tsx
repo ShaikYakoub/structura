@@ -4,15 +4,16 @@ import { Renderer } from "@/components/renderer";
 import type { Metadata } from "next";
 
 interface SitePageProps {
-  params: {
+  params: Promise<{
     domain: string;
     slug?: string[];
-  };
+  }>;
 }
 
-export async function generateMetadata({
-  params,
-}: SitePageProps): Promise<Metadata> {
+export async function generateMetadata(
+  props: SitePageProps,
+): Promise<Metadata> {
+  const params = await props.params;
   const { domain, slug } = params;
 
   const site = await prisma.site.findUnique({
@@ -52,7 +53,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function SitePage({ params }: SitePageProps) {
+export default async function SitePage(props: SitePageProps) {
+  const params = await props.params;
   const { domain, slug } = params;
 
   // Find the site

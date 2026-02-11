@@ -1,6 +1,6 @@
 "use server";
 
-import { razorpayInstance, validatePaymentSignature } from "@/lib/razorpay";
+import { getRazorpayInstance, validatePaymentSignature } from "@/lib/razorpay";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -37,7 +37,8 @@ export async function createSubscription(
 
     // Create customer if doesn't exist
     if (!customerId) {
-      const customer = await razorpayInstance.customers.create({
+      const razorpay = getRazorpayInstance();
+      const customer = await razorpay.customers.create({
         email: user.email,
         name: user.name || user.email,
         fail_existing: 0,
@@ -53,7 +54,8 @@ export async function createSubscription(
     }
 
     // Create subscription
-    const subscription = await razorpayInstance.subscriptions.create({
+    const razorpay = getRazorpayInstance();
+    const subscription = await razorpay.subscriptions.create({
       plan_id: planId,
       customer_id: customerId,
       total_count: 12, // 12 months
@@ -62,7 +64,7 @@ export async function createSubscription(
       notes: {
         userId: userId,
       },
-    });
+    } as any);
 
     console.log("✅ Subscription created:", subscription.id);
 
@@ -105,7 +107,8 @@ export async function verifyPayment(
     }
 
     // Get subscription details from Razorpay
-    const subscription = await razorpayInstance.subscriptions.fetch(
+    const razorpay = getRazorpayInstance();
+    const subscription = await razorpay.subscriptions.fetch(
       subscriptionId
     );
 
@@ -197,7 +200,8 @@ export async function cancelSubscription(
     }
 
     // Cancel on Razorpay
-    await razorpayInstance.subscriptions.cancel(
+    const razorpay = getRazorpayInstance();
+    await razorpay.subscriptions.cancel(
       user.razorpaySubscriptionId,
       true // Cancel at end of cycle
     );

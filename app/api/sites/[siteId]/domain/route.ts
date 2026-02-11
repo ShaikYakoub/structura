@@ -22,9 +22,10 @@ const customDomainSchema = z
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { siteId: string } }
+  context: { params: Promise<{ siteId: string }> },
 ) {
   try {
+    const params = await context.params;
     // Get session for audit logging
     const session = await auth();
     if (!session?.user?.id) {

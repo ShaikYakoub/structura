@@ -6,62 +6,117 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SettingsForm } from "@/components/dashboard/settings-form";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import prisma from "@/lib/prisma";
+import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {
   const session = await auth();
-  const user = session?.user;
-  const tenantId = (user as any)?.tenantId;
+
+  if (!session?.user?.email) {
+    redirect("/login");
+  }
+
+  // Get full user data
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      isPro: true,
+      razorpayCurrentPeriodEnd: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-2">Manage your account settings</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Settings</h1>
+        <p className="text-muted-foreground">
+          Manage your account settings and preferences
+        </p>
       </div>
 
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>Your account details</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm font-medium text-gray-700">Name</p>
-              <p className="text-gray-900">{user?.name || "Not set"}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">Email</p>
-              <p className="text-gray-900">{user?.email}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">Tenant ID</p>
-              <p className="text-gray-900 font-mono text-sm">{tenantId}</p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Profile Settings */}
+      <SettingsForm user={user} />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Status</CardTitle>
-            <CardDescription>Your subscription and limits</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-700">Plan</span>
-                <span className="text-sm font-medium text-gray-900">Free</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-gray-700">Status</span>
-                <span className="text-sm font-medium text-green-600">
-                  Active
-                </span>
-              </div>
+      {/* Subscription Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>My Subscription</CardTitle>
+          <CardDescription>
+            Your current subscription plan and billing information
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Current Plan</p>
+              <p className="text-sm text-muted-foreground">
+                {user.isPro ? "Pro Plan" : "Free Plan"}
+              </p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Badge variant={user.isPro ? "default" : "secondary"}>
+              {user.isPro ? "PRO" : "FREE"}
+            </Badge>
+          </div>
+
+          {user.isPro && user.razorpayCurrentPeriodEnd && (
+            <div>
+              <p className="font-medium">Billing Cycle</p>
+              <p className="text-sm text-muted-foreground">
+                Renews on{" "}
+                {new Date(user.razorpayCurrentPeriodEnd).toLocaleDateString()}
+              </p>
+            </div>
+          )}
+
+          {!user.isPro && (
+            <div className="pt-2">
+              <Button asChild>
+                <Link href="/app/billing">Upgrade to Pro</Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Account Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Account Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Member since</span>
+            <span className="font-medium">
+              {new Date(user.createdAt).toLocaleDateString()}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Note about Admin */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground">
+            💡 <strong>Note:</strong> This is your user settings page. If you're
+            the platform owner, access the Super Admin dashboard at{" "}
+            <Link href="/admin" className="text-primary hover:underline">
+              /admin
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

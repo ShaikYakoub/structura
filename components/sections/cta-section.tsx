@@ -62,7 +62,7 @@ export function CTASection({
               <Button
                 key={index}
                 asChild
-                variant={action.variant || "secondary"}
+                variant={(action.variant as "default" | "link" | "destructive" | "outline" | "secondary" | "ghost") || "secondary"}
                 size="lg"
               >
                 <Link href={action.href}>{action.label}</Link>

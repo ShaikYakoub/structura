@@ -11,11 +11,11 @@ export function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-12 md:py-20 lg:py-24">
       {/* Background gradient */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/5 via-background to-background" />
       
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6 md:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: Content */}
           <motion.div
@@ -61,7 +61,7 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <Button size="lg" asChild className="text-base">
+              <Button size="lg" asChild className="text-base transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-2">
                 <Link href="/register">
                   Start Building for Free
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -70,7 +70,7 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-base"
+                className="text-base transition-all duration-200 hover:shadow-md hover:scale-[1.02] border-2"
                 onClick={() => scrollToSection("showcase")}
               >
                 <Play className="mr-2 h-5 w-5" />
@@ -112,7 +112,10 @@ export function Hero() {
               </div>
 
               {/* Editor Interface Screenshot */}
-              <div className="aspect-video bg-gradient-to-br from-primary/20 via-primary/10 to-background p-8">
+              <div className="aspect-video bg-gradient-to-br from-primary/20 via-primary/10 to-background p-8 select-none relative overflow-hidden">
+                {/* Grid pattern overlay - More visible */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:linear-gradient(to_bottom,white,transparent)]" />
+                <div className="relative z-10">
                 <div className="grid grid-cols-12 gap-4 h-full">
                   {/* Left Sidebar */}
                   <div className="col-span-3 bg-muted/50 rounded-lg p-4 space-y-2">
@@ -132,6 +135,7 @@ export function Hero() {
                       <div className="h-16 bg-muted/30 rounded" />
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
             </div>

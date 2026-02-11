@@ -215,9 +215,7 @@ export async function checkSubdomainAvailability(
 }
 
 /**
- * Get template preview URL
+ * Template utilities like getTemplatePreviewUrl have been moved to @/lib/template-utils
+ * for client-side usage without server action constraints.
  */
-export function getTemplatePreviewUrl(subdomain: string): string {
-  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || "localhost:3000";
-  return `https://${subdomain}.${appDomain}`;
-}
+

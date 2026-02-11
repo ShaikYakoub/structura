@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Smooth button transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+button.transition-all:hover {
+  transition-duration: 150ms;
+}
+
 /* Rich Text Prose Styles */
 .prose {
   color: hsl(var(--foreground));

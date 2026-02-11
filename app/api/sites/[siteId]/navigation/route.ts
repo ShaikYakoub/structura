@@ -4,9 +4,10 @@ import { auth } from "@/auth";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { siteId: string } }
+  context: { params: Promise<{ siteId: string }> },
 ) {
   try {
+    const params = await context.params;
     // Verify authentication
     const session = await auth();
     if (!session) {

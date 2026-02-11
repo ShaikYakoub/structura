@@ -74,7 +74,9 @@ export function generateUniqueFilename(originalName: string): string {
 // Generate presigned URL for upload
 export async function generatePresignedUrl(
   key: string,
-  contentlient = getS3Client();
+  contentType: string,
+): Promise<string> {
+  const client = getS3Client();
   const bucketName = getBucketName();
   
   const command = new PutObjectCommand({
@@ -84,7 +86,5 @@ export async function generatePresignedUrl(
     ACL: "public-read",
   });
 
-  return getSignedUrl(c
-
-  return getSignedUrl(s3Client, command, { expiresIn: 300 }); // 5 minutes
+  return getSignedUrl(client, command, { expiresIn: 300 }); // 5 minutes
 }

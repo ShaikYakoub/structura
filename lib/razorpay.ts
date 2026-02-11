@@ -1,15 +1,24 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
 
-if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-  console.warn("⚠️ Razorpay credentials are not set in environment variables");
-}
+// Lazy initialization to avoid build-time errors when credentials are missing
+let _razorpayInstance: Razorpay | null = null;
 
-// Initialize Razorpay instance
-export const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "",
-});
+export function getRazorpayInstance(): Razorpay {
+  if (!_razorpayInstance) {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.warn("⚠️ Razorpay credentials are not set in environment variables");
+      throw new Error("Razorpay is not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET");
+    }
+    
+    _razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+  }
+  
+  return _razorpayInstance;
+}
 
 /**
  * Validate payment signature from Razorpay checkout
@@ -51,7 +60,8 @@ export function validateWebhookSignature(
  */
 export async function getPlanDetails(planId: string) {
   try {
-    const plan = await razorpayInstance.plans.fetch(planId);
+    const razorpay = getRazorpayInstance();
+    const plan = await razorpay.plans.fetch(planId);
     return plan;
   } catch (error) {
     console.error("Error fetching plan:", error);

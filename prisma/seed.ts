@@ -4,503 +4,317 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log("🌱 Starting database seed...");
 
-  // Create Tenant
-  const tenant = await prisma.tenant.upsert({
+  // 1. Create or update Demo User
+  const hashedPassword = await bcrypt.hash("password", 10);
+
+  // First, create or get a tenant for demo user
+  const demoTenant = await prisma.tenant.upsert({
     where: { email: "demo@structura.in" },
     update: {},
     create: {
-      name: "Demo User",
+      name: "Demo Tenant",
       email: "demo@structura.in",
-      slug: "demo-user",
+      slug: "demo-tenant",
     },
   });
 
-  console.log("✓ Created tenant:", tenant.name);
-
-  // Create Demo User
-  const hashedPassword = await bcrypt.hash("password", 10);
-  const user = await prisma.user.upsert({
+  const demoUser = await prisma.user.upsert({
     where: { email: "demo@structura.in" },
     update: {},
     create: {
       email: "demo@structura.in",
       name: "Demo User",
       password: hashedPassword,
-      tenantId: tenant.id,
+      isPro: false,
+      tenantId: demoTenant.id,
     },
   });
 
-  console.log("✓ Created user:", user.email);
+  console.log("✅ Demo user created:", demoUser.email);
 
-  // Create Bakery Site
-  const bakerySite = await prisma.site.upsert({
-    where: { subdomain: "bakery" },
+  // 2. Create FitLife Gym Site
+  const gymSite = await prisma.site.upsert({
+    where: { subdomain: "fitlife" },
     update: {},
     create: {
-      name: "Bakery",
-      subdomain: "bakery",
-      description: "Fresh artisan bread and pastries made daily",
-      tenantId: tenant.id,
-      isPublished: true,
+      name: "FitLife Gym",
+      subdomain: "fitlife",
+      tenantId: demoTenant.id,
+      logo: null,
+      navColor: "#1a1a1a",
       navigation: [
-        { label: "Home", href: "/", type: "page" },
-        { label: "About", href: "/about", type: "page" },
+        { label: "Home", href: "/" },
+        { label: "Classes", href: "/classes" },
+        { label: "Pricing", href: "/pricing" },
+        { label: "Contact", href: "/contact" },
       ],
       styles: {
-        primary: "#d97706",
+        primary: "#ff6b35",
         background: "#ffffff",
-        foreground: "#000000",
-        muted: "#f1f5f9",
-        mutedForeground: "#64748b",
-        fontHeading: "Playfair Display",
+        fontHeading: "Inter",
         fontBody: "Inter",
         radius: "0.5",
       },
     },
   });
 
-  console.log("✓ Created site:", bakerySite.name);
+  console.log("✅ Gym site created:", gymSite.subdomain);
 
-  // Create Gym Site
-  const gymSite = await prisma.site.upsert({
-    where: { subdomain: "gym" },
+  // Create homepage for Gym
+  const gymHomePage = await prisma.page.create({
+    data: {
+      name: "Home",
+      slug: "home",
+      path: "/",
+      siteId: gymSite.id,
+      isHomePage: true,
+      isPublished: true,
+      draftContent: [
+        {
+          id: "hero-1",
+          type: "hero",
+          content: {
+            title: "Transform Your Body & Mind",
+            subtitle:
+              "Join FitLife Gym and start your fitness journey today. Expert trainers, modern equipment, and a supportive community.",
+            primaryButton: {
+              text: "Get Started",
+              link: "/contact",
+            },
+            secondaryButton: {
+              text: "View Classes",
+              link: "/classes",
+            },
+            backgroundImage: null,
+          },
+        },
+        {
+          id: "features-1",
+          type: "features",
+          content: {
+            title: "Why Choose FitLife?",
+            features: [
+              {
+                icon: "dumbbell",
+                title: "Expert Trainers",
+                description:
+                  "Certified professionals to guide your fitness journey",
+              },
+              {
+                icon: "clock",
+                title: "24/7 Access",
+                description: "Work out on your schedule, any time of day",
+              },
+              {
+                icon: "users",
+                title: "Community",
+                description:
+                  "Join a supportive community of fitness enthusiasts",
+              },
+            ],
+          },
+        },
+      ],
+      publishedContent: [
+        {
+          id: "hero-1",
+          type: "hero",
+          content: {
+            title: "Transform Your Body & Mind",
+            subtitle:
+              "Join FitLife Gym and start your fitness journey today. Expert trainers, modern equipment, and a supportive community.",
+            primaryButton: {
+              text: "Get Started",
+              link: "/contact",
+            },
+            secondaryButton: {
+              text: "View Classes",
+              link: "/classes",
+            },
+            backgroundImage: null,
+          },
+        },
+        {
+          id: "features-1",
+          type: "features",
+          content: {
+            title: "Why Choose FitLife?",
+            features: [
+              {
+                icon: "dumbbell",
+                title: "Expert Trainers",
+                description:
+                  "Certified professionals to guide your fitness journey",
+              },
+              {
+                icon: "clock",
+                title: "24/7 Access",
+                description: "Work out on your schedule, any time of day",
+              },
+              {
+                icon: "users",
+                title: "Community",
+                description:
+                  "Join a supportive community of fitness enthusiasts",
+              },
+            ],
+          },
+        },
+      ],
+      lastPublishedAt: new Date(),
+    },
+  });
+
+  console.log("✅ Gym homepage created");
+
+  // 3. Create Sweet Treats Bakery Site
+  const bakerySite = await prisma.site.upsert({
+    where: { subdomain: "bakery" },
     update: {},
     create: {
-      name: "Gym",
-      subdomain: "gym",
-      description: "Transform your body and mind with expert training",
-      tenantId: tenant.id,
-      isPublished: true,
+      name: "Sweet Treats Bakery",
+      subdomain: "bakery",
+      tenantId: demoTenant.id,
+      logo: null,
+      navColor: "#fef6f0",
       navigation: [
-        { label: "Home", href: "/", type: "page" },
-        { label: "About", href: "/about", type: "page" },
+        { label: "Home", href: "/" },
+        { label: "Menu", href: "/menu" },
+        { label: "About", href: "/about" },
+        { label: "Order", href: "/order" },
       ],
       styles: {
-        primary: "#dc2626",
+        primary: "#d4a574",
         background: "#ffffff",
-        foreground: "#000000",
-        muted: "#f1f5f9",
-        mutedForeground: "#64748b",
-        fontHeading: "Montserrat",
-        fontBody: "Roboto",
-        radius: "0.25",
+        fontHeading: "Inter",
+        fontBody: "Inter",
+        radius: "0.5",
       },
     },
   });
 
-  console.log("✓ Created site:", gymSite.name);
+  console.log("✅ Bakery site created:", bakerySite.subdomain);
 
-  // Create Bakery Home Page
-  await prisma.page.upsert({
-    where: {
-      siteId_slug: {
-        siteId: bakerySite.id,
-        slug: "/",
-      },
-    },
-    update: {},
-    create: {
+  // Create homepage for Bakery
+  const bakeryHomePage = await prisma.page.create({
+    data: {
       name: "Home",
-      slug: "/",
+      slug: "home",
       path: "/",
       siteId: bakerySite.id,
-      isPublished: true,
       isHomePage: true,
-      draftContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Fresh Artisan Bakery",
-              subtitle:
-                "Handcrafted bread and pastries baked fresh every morning",
-              image:
-                "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200",
+      isPublished: true,
+      draftContent: [
+        {
+          id: "hero-1",
+          type: "hero",
+          content: {
+            title: "Freshly Baked Every Day",
+            subtitle:
+              "Artisan breads, delicious pastries, and custom cakes made with love. Visit Sweet Treats Bakery for the finest baked goods in town.",
+            primaryButton: {
+              text: "Order Now",
+              link: "/order",
             },
-          },
-          {
-            type: "features",
-            data: {
-              title: "Why Choose Us",
-              features: [
-                {
-                  title: "Fresh Daily",
-                  description:
-                    "Everything is baked fresh every morning using traditional methods",
-                },
-                {
-                  title: "Quality Ingredients",
-                  description:
-                    "We use only the finest organic flour and natural ingredients",
-                },
-                {
-                  title: "Family Recipes",
-                  description:
-                    "Time-tested recipes passed down through generations",
-                },
-              ],
+            secondaryButton: {
+              text: "View Menu",
+              link: "/menu",
             },
+            backgroundImage: null,
           },
-          {
-            type: "cta",
-            data: {
-              title: "Visit Us Today",
-              subtitle: "Experience the taste of fresh artisan baking",
-              buttonText: "View Menu",
-              buttonLink: "#menu",
-              variant: "primary",
+        },
+        {
+          id: "features-1",
+          type: "features",
+          content: {
+            title: "What We Offer",
+            features: [
+              {
+                icon: "cake",
+                title: "Custom Cakes",
+                description: "Beautiful custom cakes for all occasions",
+              },
+              {
+                icon: "croissant",
+                title: "Fresh Pastries",
+                description: "Baked fresh daily with premium ingredients",
+              },
+              {
+                icon: "bread",
+                title: "Artisan Breads",
+                description: "Traditional recipes with a modern twist",
+              },
+            ],
+          },
+        },
+      ],
+      publishedContent: [
+        {
+          id: "hero-1",
+          type: "hero",
+          content: {
+            title: "Freshly Baked Every Day",
+            subtitle:
+              "Artisan breads, delicious pastries, and custom cakes made with love. Visit Sweet Treats Bakery for the finest baked goods in town.",
+            primaryButton: {
+              text: "Order Now",
+              link: "/order",
             },
-          },
-        ],
-      },
-      publishedContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Fresh Artisan Bakery",
-              subtitle:
-                "Handcrafted bread and pastries baked fresh every morning",
-              image:
-                "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200",
+            secondaryButton: {
+              text: "View Menu",
+              link: "/menu",
             },
+            backgroundImage: null,
           },
-          {
-            type: "features",
-            data: {
-              title: "Why Choose Us",
-              features: [
-                {
-                  title: "Fresh Daily",
-                  description:
-                    "Everything is baked fresh every morning using traditional methods",
-                },
-                {
-                  title: "Quality Ingredients",
-                  description:
-                    "We use only the finest organic flour and natural ingredients",
-                },
-                {
-                  title: "Family Recipes",
-                  description:
-                    "Time-tested recipes passed down through generations",
-                },
-              ],
-            },
+        },
+        {
+          id: "features-1",
+          type: "features",
+          content: {
+            title: "What We Offer",
+            features: [
+              {
+                icon: "cake",
+                title: "Custom Cakes",
+                description: "Beautiful custom cakes for all occasions",
+              },
+              {
+                icon: "croissant",
+                title: "Fresh Pastries",
+                description: "Baked fresh daily with premium ingredients",
+              },
+              {
+                icon: "bread",
+                title: "Artisan Breads",
+                description: "Traditional recipes with a modern twist",
+              },
+            ],
           },
-          {
-            type: "cta",
-            data: {
-              title: "Visit Us Today",
-              subtitle: "Experience the taste of fresh artisan baking",
-              buttonText: "View Menu",
-              buttonLink: "#menu",
-              variant: "primary",
-            },
-          },
-        ],
-      },
+        },
+      ],
       lastPublishedAt: new Date(),
     },
   });
 
-  // Create Bakery About Page
-  await prisma.page.upsert({
-    where: {
-      siteId_slug: {
-        siteId: bakerySite.id,
-        slug: "about",
-      },
-    },
-    update: {},
-    create: {
-      name: "About Us",
-      slug: "about",
-      path: "/about",
-      siteId: bakerySite.id,
-      isPublished: true,
-      isHomePage: false,
-      draftContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Our Story",
-              subtitle: "Four generations of baking excellence",
-              image:
-                "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "Our Values",
-              features: [
-                {
-                  title: "Tradition",
-                  description:
-                    "We honor time-tested baking methods passed down through our family",
-                },
-                {
-                  title: "Quality",
-                  description:
-                    "Only the finest ingredients make it into our kitchen",
-                },
-                {
-                  title: "Community",
-                  description:
-                    "We're proud to serve our neighbors with delicious baked goods",
-                },
-              ],
-            },
-          },
-        ],
-      },
-      publishedContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Our Story",
-              subtitle: "Four generations of baking excellence",
-              image:
-                "https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "Our Values",
-              features: [
-                {
-                  title: "Tradition",
-                  description:
-                    "We honor time-tested baking methods passed down through our family",
-                },
-                {
-                  title: "Quality",
-                  description:
-                    "Only the finest ingredients make it into our kitchen",
-                },
-                {
-                  title: "Community",
-                  description:
-                    "We're proud to serve our neighbors with delicious baked goods",
-                },
-              ],
-            },
-          },
-        ],
-      },
-      lastPublishedAt: new Date(),
-    },
-  });
+  console.log("✅ Bakery homepage created");
 
-  // Create Gym Home Page
-  await prisma.page.upsert({
-    where: {
-      siteId_slug: {
-        siteId: gymSite.id,
-        slug: "/",
-      },
-    },
-    update: {},
-    create: {
-      name: "Home",
-      slug: "/",
-      path: "/",
-      siteId: gymSite.id,
-      isPublished: true,
-      isHomePage: true,
-      draftContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Transform Your Life",
-              subtitle: "State-of-the-art fitness center with expert trainers",
-              image:
-                "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "Our Facilities",
-              features: [
-                {
-                  title: "Modern Equipment",
-                  description: "Latest cardio and strength training machines",
-                },
-                {
-                  title: "Expert Trainers",
-                  description:
-                    "Certified professionals to guide your fitness journey",
-                },
-                {
-                  title: "Group Classes",
-                  description: "Yoga, spinning, HIIT and more",
-                },
-              ],
-            },
-          },
-          {
-            type: "cta",
-            data: {
-              title: "Start Your Transformation",
-              subtitle: "Join today and get your first month at 50% off",
-              buttonText: "Get Started",
-              buttonLink: "#pricing",
-              variant: "primary",
-            },
-          },
-        ],
-      },
-      publishedContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Transform Your Life",
-              subtitle: "State-of-the-art fitness center with expert trainers",
-              image:
-                "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "Our Facilities",
-              features: [
-                {
-                  title: "Modern Equipment",
-                  description: "Latest cardio and strength training machines",
-      draftContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Our Mission",
-              subtitle: "Empowering communities through fitness",
-              image:
-                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "What We Offer",
-              features: [
-                {
-                  title: "Personalized Training",
-                  description: "Custom workout plans tailored to your goals",
-                },
-                {
-                  title: "Nutritional Guidance",
-                  description: "Expert advice on meal planning and supplements",
-                },
-                {
-                  title: "Supportive Community",
-                  description: "Join a motivated group of fitness enthusiasts",
-                },
-              ],
-            },
-          },
-        ],
-      },
-      publishedContent: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Our Mission",
-              subtitle: "Empowering communities through fitness",
-              image:
-                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "What We Offer",
-              features: [
-                {
-                  title: "Personalized Training",
-                  description: "Custom workout plans tailored to your goals",
-                },
-                {
-                  title: "Nutritional Guidance",
-                  description: "Expert advice on meal planning and supplements",
-                },
-                {
-                  title: "Supportive Community",
-                  description: "Join a motivated group of fitness enthusiasts",
-                },
-              ],
-            },
-          },
-        ],
-      },
-      lastPublishedAt: new Date()iteId_slug: {
-        siteId: gymSite.id,
-        slug: "about",
-      },
-    },
-    update: {},
-    create: {
-      name: "About Us",
-      slug: "about",
-      path: "/about",
-      siteId: gymSite.id,
-      isPublished: true,
-      isHomePage: false,
-      content: {
-        sections: [
-          {
-            type: "hero",
-            data: {
-              title: "Our Mission",
-              subtitle: "Empowering communities through fitness",
-              image:
-                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200",
-            },
-          },
-          {
-            type: "features",
-            data: {
-              title: "What We Offer",
-              features: [
-                {
-                  title: "Personalized Training",
-                  description: "Custom workout plans tailored to your goals",
-                },
-                {
-                  title: "Nutritional Guidance",
-                  description: "Expert advice on meal planning and supplements",
-                },
-                {
-                  title: "Supportive Community",
-                  description: "Join a motivated group of fitness enthusiasts",
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  });
-
-  console.log("✓ Created sample pages");
-  console.log("✅ Seeding complete!");
+  console.log("🎉 Seed completed successfully!");
+  console.log("\n📝 Demo credentials:");
+  console.log("   Email: demo@structura.in");
+  console.log("   Password: password");
+  console.log("\n🌐 Demo sites:");
+  console.log("   Gym: http://fitlife.localhost:3000");
+  console.log("   Bakery: http://bakery.localhost:3000");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seeding failed:", e);
+    console.error("❌ Seed failed:", e);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
   });
+

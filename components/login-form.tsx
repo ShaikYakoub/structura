@@ -47,11 +47,8 @@ export function LoginForm() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Enter your credentials to continue</CardDescription>
-      </CardHeader>
+    <Card className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+      <CardContent className="pt-6">
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -61,7 +58,7 @@ export function LoginForm() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="demo@structura.in"
+              placeholder="you@example.com"
               required
             />
           </div>
@@ -80,20 +77,10 @@ export function LoginForm() {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full mt-2" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
-
-        <div className="mt-4 p-3 bg-blue-50 rounded-md">
-          <p className="text-sm text-blue-900">
-            <strong>Demo credentials:</strong>
-            <br />
-            Email: demo@structura.in
-            <br />
-            Password: password
-          </p>
-        </div>
       </CardContent>
     </Card>
   );

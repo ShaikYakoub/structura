@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
-import { registry } from "@/lib/registry";
+import { componentRegistry } from "@/lib/registry";
 
 interface PreviewPageProps {
   params: Promise<{
@@ -36,12 +36,12 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
       {/* Render Page Content */}
       <div className="mx-auto">
         {content.map((component: any, index: number) => {
-          const Component = registry[component.type as keyof typeof registry];
+          const Component = componentRegistry[component.type]?.component;
           if (!Component) {
             console.warn(`Component type "${component.type}" not found in registry`);
             return null;
           }
-          return <Component key={index} {...component.props} />;
+          return <Component key={index} data={component.content || component.props} />;
         })}
       </div>
     </div>

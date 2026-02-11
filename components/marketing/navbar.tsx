@@ -9,7 +9,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -35,7 +35,7 @@ export function Navbar() {
               Pricing
             </Link>
             <Link
-              href="/templates"
+              href="#showcase"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Templates
@@ -50,10 +50,10 @@ export function Navbar() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" asChild>
+            <Button variant="ghost" asChild className="border-2">
               <Link href="/login">Login</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="border-2">
               <Link href="/register">Get Started</Link>
             </Button>
           </div>
@@ -87,17 +87,17 @@ export function Navbar() {
               Pricing
             </Link>
             <Link
-              href="/templates"
+              href="#showcase"
               className="block text-sm font-medium"
               onClick={() => setIsOpen(false)}
             >
               Templates
             </Link>
             <div className="flex flex-col gap-2 pt-4">
-              <Button variant="outline" asChild className="w-full">
+              <Button variant="outline" asChild className="w-full border-2">
                 <Link href="/login">Login</Link>
               </Button>
-              <Button asChild className="w-full">
+              <Button asChild className="w-full border-2">
                 <Link href="/register">Get Started</Link>
               </Button>
             </div>

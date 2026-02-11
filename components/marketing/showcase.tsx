@@ -30,8 +30,8 @@ const templates = [
 
 export function Showcase() {
   return (
-    <section id="showcase" className="py-20 md:py-32 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section id="showcase" className="py-12 md:py-16 lg:py-20 bg-muted/30">
+      <div className="container mx-auto px-6 md:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -60,7 +60,8 @@ export function Showcase() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="flex-shrink-0 w-80 md:w-auto snap-center"
               >
-                <div className="group relative overflow-hidden rounded-2xl border bg-background hover:shadow-xl transition-all duration-300">
+                <Link href="#templates" className="block">
+                  <div className="group relative overflow-hidden rounded-2xl border bg-background hover:shadow-xl transition-all duration-300 cursor-pointer">
                   {/* Image Container */}
                   <div
                     className={`relative aspect-[4/3] bg-gradient-to-br ${template.color} overflow-hidden`}
@@ -75,11 +76,9 @@ export function Showcase() {
 
                     {/* Overlay on hover */}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <Button variant="secondary" size="sm" asChild>
-                        <Link href="/templates">
-                          View Template
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
+                      <Button variant="secondary" size="sm" className="border-2">
+                        View Template
+                        <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -91,7 +90,8 @@ export function Showcase() {
                       {template.category}
                     </p>
                   </div>
-                </div>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -104,8 +104,8 @@ export function Showcase() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="text-center mt-12"
         >
-          <Button size="lg" variant="outline" asChild>
-            <Link href="/templates">
+          <Button size="lg" variant="outline" asChild className="border-2">
+            <Link href="#showcase">
               View All Templates
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>

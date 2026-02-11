@@ -46,11 +46,11 @@ export default async function SiteEditorPage({ params }: SiteEditorPageProps) {
         <div className="space-y-6">
           <ThemeSettings
             siteId={site.id}
-            currentStyles={typeof site.styles === 'object' && site.styles !== null ? site.styles : {}}
+            currentStyles={typeof site.styles === 'object' && site.styles !== null && !Array.isArray(site.styles) ? site.styles as any : {}}
           />
           <NavManager
             siteId={site.id}
-            currentNavigation={Array.isArray(site.navigation) ? site.navigation : []}
+            currentNavigation={Array.isArray(site.navigation) ? site.navigation as any : []}
             pages={site.pages}
           />
         </div>

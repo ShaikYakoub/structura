@@ -1,0 +1,125 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e5]:
+        - link "S Structura" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]: S
+          - generic [ref=e8]: Structura
+        - generic [ref=e9]:
+          - link "Features" [ref=e10] [cursor=pointer]:
+            - /url: "#features"
+          - link "Pricing" [ref=e11] [cursor=pointer]:
+            - /url: "#pricing"
+          - link "Templates" [ref=e12] [cursor=pointer]:
+            - /url: /templates
+          - link "Docs" [ref=e13] [cursor=pointer]:
+            - /url: /docs
+        - generic [ref=e14]:
+          - link "Login" [ref=e15] [cursor=pointer]:
+            - /url: /login
+          - link "Get Started" [ref=e16] [cursor=pointer]:
+            - /url: /register
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - heading "Terms of Service" [level=1] [ref=e19]
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - heading "1. Agreement to Terms" [level=2] [ref=e22]
+            - paragraph [ref=e23]: By accessing or using Structura ("Service"), you agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may not access the Service.
+          - generic [ref=e24]:
+            - heading "2. Description of Service" [level=2] [ref=e25]
+            - paragraph [ref=e26]: Structura is a website builder platform that allows users to create, design, and publish websites. We provide the tools and hosting infrastructure, but you retain full ownership and responsibility for your content.
+          - generic [ref=e27]:
+            - heading "3. User Responsibilities" [level=2] [ref=e28]
+            - paragraph [ref=e29]: "You are responsible for:"
+            - list [ref=e30]:
+              - listitem [ref=e31]: Maintaining the confidentiality of your account credentials
+              - listitem [ref=e32]: All content you publish through the Service
+              - listitem [ref=e33]: Ensuring your content complies with all applicable laws
+              - listitem [ref=e34]: Not using the Service for illegal or unauthorized purposes
+              - listitem [ref=e35]: Not attempting to breach security or interfere with the Service
+          - generic [ref=e36]:
+            - heading "4. Content Ownership" [level=2] [ref=e37]
+            - paragraph [ref=e38]: You retain all rights to content you create and publish using Structura. However, by using our Service, you grant us a license to host, store, and display your content as necessary to provide the Service.
+            - paragraph [ref=e39]: We are not responsible for user-generated content. You are solely liable for any content you publish through our platform.
+          - generic [ref=e40]:
+            - heading "5. Prohibited Content" [level=2] [ref=e41]
+            - paragraph [ref=e42]: "You may not create or publish websites containing:"
+            - list [ref=e43]:
+              - listitem [ref=e44]: Illegal content or content promoting illegal activities
+              - listitem [ref=e45]: Malware, viruses, or malicious code
+              - listitem [ref=e46]: Phishing or scam content
+              - listitem [ref=e47]: Content that infringes intellectual property rights
+              - listitem [ref=e48]: Hate speech, harassment, or discriminatory content
+              - listitem [ref=e49]: Adult content or sexually explicit material
+            - paragraph [ref=e50]: We reserve the right to remove any content that violates these terms without prior notice.
+          - generic [ref=e51]:
+            - heading "6. Subscription and Payments" [level=2] [ref=e52]
+            - paragraph [ref=e53]: Some features require a paid subscription. By subscribing, you agree to pay the stated fees. Subscriptions automatically renew unless cancelled before the renewal date.
+          - generic [ref=e54]:
+            - heading "7. Termination" [level=2] [ref=e55]
+            - paragraph [ref=e56]: We may terminate or suspend your account immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason.
+          - generic [ref=e57]:
+            - heading "8. Limitation of Liability" [level=2] [ref=e58]
+            - paragraph [ref=e59]: Structura is provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of the Service, including but not limited to data loss, service interruptions, or security breaches.
+          - generic [ref=e60]:
+            - heading "9. Changes to Terms" [level=2] [ref=e61]
+            - paragraph [ref=e62]: We reserve the right to modify these terms at any time. We will notify users of significant changes via email or platform notification. Continued use of the Service after changes constitutes acceptance of the new terms.
+          - generic [ref=e63]:
+            - heading "10. Contact" [level=2] [ref=e64]
+            - paragraph [ref=e65]:
+              - text: For questions about these Terms, contact us at
+              - link "legal@structura.com" [ref=e66] [cursor=pointer]:
+                - /url: mailto:legal@structura.com
+          - paragraph [ref=e67]: "Last updated: February 11, 2026"
+    - contentinfo [ref=e68]:
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - heading "Structura" [level=3] [ref=e72]
+            - paragraph [ref=e73]: Build beautiful websites in minutes
+          - generic [ref=e74]:
+            - heading "Product" [level=4] [ref=e75]
+            - list [ref=e76]:
+              - listitem [ref=e77]:
+                - link "Features" [ref=e78] [cursor=pointer]:
+                  - /url: /features
+              - listitem [ref=e79]:
+                - link "Pricing" [ref=e80] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=e81]:
+                - link "Templates" [ref=e82] [cursor=pointer]:
+                  - /url: /templates
+          - generic [ref=e83]:
+            - heading "Legal" [level=4] [ref=e84]
+            - list [ref=e85]:
+              - listitem [ref=e86]:
+                - link "Terms of Service" [ref=e87] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e88]:
+                - link "Privacy Policy" [ref=e89] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e90]:
+                - link "Refund Policy" [ref=e91] [cursor=pointer]:
+                  - /url: /refund
+          - generic [ref=e92]:
+            - heading "Support" [level=4] [ref=e93]
+            - list [ref=e94]:
+              - listitem [ref=e95]:
+                - link "Contact Us" [ref=e96] [cursor=pointer]:
+                  - /url: mailto:support@structura.com
+              - listitem [ref=e97]:
+                - link "Documentation" [ref=e98] [cursor=pointer]:
+                  - /url: /docs
+        - paragraph [ref=e100]: © 2026 Structura. All rights reserved.
+    - button [ref=e101] [cursor=pointer]:
+      - img
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e107] [cursor=pointer]:
+    - img [ref=e108]
+  - alert [ref=e111]
+```

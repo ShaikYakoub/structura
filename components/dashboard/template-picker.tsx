@@ -17,9 +17,9 @@ import { Eye, Sparkles } from "lucide-react";
 import {
   getTemplates,
   getTemplateCategories,
-  getTemplatePreviewUrl,
   type Template,
 } from "@/app/actions/templates";
+import { getTemplatePreviewUrl } from "@/lib/template-utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface TemplatePickerProps {

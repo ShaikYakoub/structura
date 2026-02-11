@@ -49,8 +49,8 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="py-20 md:py-32">
-      <div className="container mx-auto px-4">
+    <section id="pricing" className="py-12 md:py-16 lg:py-20">
+      <div className="container mx-auto px-6 md:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -66,7 +66,7 @@ export function Pricing() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto items-center">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -77,13 +77,15 @@ export function Pricing() {
             >
               <Card
                 className={`
-                  relative overflow-hidden
+                  relative overflow-hidden select-none
                   ${plan.popular ? "border-primary shadow-lg scale-105" : ""}
                 `}
               >
                 {plan.popular && (
-                  <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
-                    MOST POPULAR
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
+                      MOST POPULAR
+                    </div>
                   </div>
                 )}
 
@@ -113,7 +115,7 @@ export function Pricing() {
 
                   <Button
                     asChild
-                    className="w-full"
+                    className="w-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-2"
                     size="lg"
                     variant={plan.popular ? "default" : "outline"}
                   >

@@ -18,7 +18,7 @@ export function SupportBubble() {
     <>
       {/* Support Card (appears when open) */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-4 w-80 shadow-2xl z-50 animate-in slide-in-from-bottom-4">
+        <Card className="fixed bottom-24 right-4 w-80 shadow-2xl z-50 animate-in slide-in-from-bottom-4 bg-white dark:bg-gray-950 border-2">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">How can we help?</CardTitle>
@@ -38,7 +38,7 @@ export function SupportBubble() {
           <CardContent className="space-y-3">
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start border-2"
               asChild
             >
               <a href="mailto:support@structura.com">
@@ -49,7 +49,7 @@ export function SupportBubble() {
             
             <Button
               variant="outline"
-              className="w-full justify-start"
+              className="w-full justify-start border-2"
               asChild
             >
               <a href="/docs" onClick={() => setIsOpen(false)}>

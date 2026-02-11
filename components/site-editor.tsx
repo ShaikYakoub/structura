@@ -52,7 +52,6 @@ export function SiteEditor({ site }: SiteEditorProps) {
     defaultValues: {
       name: site.name,
       description: site.description || "",
-      content: JSON.stringify(site.content, null, 2),
     },
   });
 

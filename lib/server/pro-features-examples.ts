@@ -7,7 +7,7 @@
  * - Server Components
  */
 
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { checkSubscription } from "@/app/actions/razorpay";
 
@@ -69,7 +69,7 @@ export async function publishSiteApi(request: NextRequest) {
     // Count user's published sites
     const publishedCount = await prisma.site.count({
       where: {
-        userId,
+        tenantId: userId,
         isPublished: true,
       },
     });
@@ -119,7 +119,7 @@ export async function setCustomDomainApi(request: NextRequest) {
   const site = await prisma.site.findFirst({
     where: {
       id: siteId,
-      userId,
+      tenantId: userId,
     },
   });
 
@@ -196,7 +196,7 @@ export const ProFeatures = {
     }
 
     const publishedCount = await prisma.site.count({
-      where: { userId, isPublished: true },
+      where: { tenantId: userId, isPublished: true },
     });
 
     const limit = 3;
