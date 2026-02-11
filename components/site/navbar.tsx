@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import {
   Sheet,
@@ -30,17 +31,17 @@ interface NavbarProps {
   };
 }
 
-export function Navbar({ 
-  data, 
-  logo, 
-  siteName, 
+export function Navbar({
+  data,
+  logo,
+  siteName,
   bgColor = "#ffffff",
-  ctaButton 
+  ctaButton,
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav 
+    <nav
       className="sticky top-0 z-50 w-full border-b shadow-sm"
       style={{ backgroundColor: bgColor }}
     >
@@ -50,9 +51,9 @@ export function Navbar({
           <Link href="/" className="flex items-center space-x-2">
             {logo ? (
               <div className="relative h-8 w-auto">
-                <Image 
-                  src={logo} 
-                  alt={siteName || "Logo"} 
+                <Image
+                  src={logo}
+                  alt={siteName || "Logo"}
                   width={120}
                   height={32}
                   className="h-8 w-auto object-contain"
@@ -71,12 +72,14 @@ export function Navbar({
                 href={item.href}
                 className="text-sm font-medium transition-colors hover:text-primary"
                 target={item.type === "external" ? "_blank" : undefined}
-                rel={item.type === "external" ? "noopener noreferrer" : undefined}
+                rel={
+                  item.type === "external" ? "noopener noreferrer" : undefined
+                }
               >
                 {item.label}
               </Link>
             ))}
-            
+
             {ctaButton && (
               <Button asChild size="sm">
                 <Link href={ctaButton.href}>{ctaButton.label}</Link>
@@ -93,12 +96,12 @@ export function Navbar({
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </SheetTrigger>
-              
+
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <SheetHeader>
                   <SheetTitle>{siteName || "Navigation"}</SheetTitle>
                 </SheetHeader>
-                
+
                 <div className="mt-6 flex flex-col space-y-4">
                   {data.map((item, index) => (
                     <Link
@@ -107,18 +110,30 @@ export function Navbar({
                       className="text-lg font-medium transition-colors hover:text-primary"
                       onClick={() => setIsOpen(false)}
                       target={item.type === "external" ? "_blank" : undefined}
-                      rel={item.type === "external" ? "noopener noreferrer" : undefined}
+                      rel={
+                        item.type === "external"
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
                     >
                       {item.label}
                     </Link>
                   ))}
-                  
+
                   {ctaButton && (
-                    <Button asChild className="mt-4">
-                      <Link href={ctaButton.href} onClick={() => setIsOpen(false)}>
-                        {ctaButton.label}
-                      </Link>
-                    </Button>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <Button asChild className="mt-4">
+                        <Link
+                          href={ctaButton.href}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {ctaButton.label}
+                        </Link>
+                      </Button>
+                    </motion.div>
                   )}
                 </div>
               </SheetContent>

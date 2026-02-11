@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -62,34 +63,44 @@ export function Showcase() {
               >
                 <Link href="#templates" className="block">
                   <div className="group relative overflow-hidden rounded-2xl border bg-background hover:shadow-xl transition-all duration-300 cursor-pointer">
-                  {/* Image Container */}
-                  <div
-                    className={`relative aspect-[4/3] bg-gradient-to-br ${template.color} overflow-hidden`}
-                  >
-                    {/* Placeholder for template screenshot */}
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-4xl mb-2">🎨</div>
-                        <p className="text-sm font-medium">{template.name}</p>
+                    {/* Image Container */}
+                    <div
+                      className={`relative aspect-[4/3] bg-gradient-to-br ${template.color} overflow-hidden`}
+                    >
+                      {/* Placeholder for template screenshot */}
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">🎨</div>
+                          <p className="text-sm font-medium">{template.name}</p>
+                        </div>
+                      </div>
+
+                      {/* Overlay on hover */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                        >
+                          <AnimatedButton
+                            variant="secondary"
+                            size="sm"
+                            animationType="bounce"
+                            className="border-2"
+                          >
+                            View Template
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </AnimatedButton>
+                        </motion.div>
                       </div>
                     </div>
 
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <Button variant="secondary" size="sm" className="border-2">
-                        View Template
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                    {/* Template Info */}
+                    <div className="p-4">
+                      <h3 className="font-semibold mb-1">{template.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {template.category}
+                      </p>
                     </div>
-                  </div>
-
-                  {/* Template Info */}
-                  <div className="p-4">
-                    <h3 className="font-semibold mb-1">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {template.category}
-                    </p>
-                  </div>
                   </div>
                 </Link>
               </motion.div>
@@ -97,20 +108,20 @@ export function Showcase() {
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="text-center mt-12"
-        >
-          <Button size="lg" variant="outline" asChild className="border-2">
+        <div className="text-center mt-12">
+          <AnimatedButton
+            size="lg"
+            variant="outline"
+            asChild
+            animationType="bounce"
+            className="border-2"
+          >
             <Link href="#showcase">
               View All Templates
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
-          </Button>
-        </motion.div>
+          </AnimatedButton>
+        </div>
       </div>
     </section>
   );

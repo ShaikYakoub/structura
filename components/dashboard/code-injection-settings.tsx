@@ -1,10 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
@@ -26,7 +33,7 @@ export function CodeInjectionSettings({
   const [headCode, setHeadCode] = useState(initialData.customHeadCode || "");
   const [bodyCode, setBodyCode] = useState(initialData.customBodyCode || "");
   const [cookieBannerEnabled, setCookieBannerEnabled] = useState(
-    initialData.cookieBannerEnabled
+    initialData.cookieBannerEnabled,
   );
   const [isSaving, setIsSaving] = useState(false);
 
@@ -74,8 +81,8 @@ export function CodeInjectionSettings({
             Head Code
           </CardTitle>
           <CardDescription>
-            Code injected into the &lt;head&gt; section. Use for Google Analytics,
-            Meta Pixel, or other tracking scripts.
+            Code injected into the &lt;head&gt; section. Use for Google
+            Analytics, Meta Pixel, or other tracking scripts.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -97,8 +104,8 @@ export function CodeInjectionSettings({
               className="font-mono text-sm"
             />
             <p className="text-xs text-muted-foreground">
-              Common use cases: Google Analytics, Google Tag Manager, Meta Pixel,
-              custom fonts
+              Common use cases: Google Analytics, Google Tag Manager, Meta
+              Pixel, custom fonts
             </p>
           </div>
         </CardContent>
@@ -161,14 +168,19 @@ export function CodeInjectionSettings({
       </Card>
 
       {/* Save Button */}
-      <Button onClick={handleSave} disabled={isSaving} className="w-full">
-        {isSaving ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Save className="mr-2 h-4 w-4" />
-        )}
-        Save Settings
-      </Button>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
+        <Button onClick={handleSave} disabled={isSaving} className="w-full">
+          {isSaving ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="mr-2 h-4 w-4" />
+          )}
+          Save Settings
+        </Button>
+      </motion.div>
     </div>
   );
 }

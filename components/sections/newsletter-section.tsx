@@ -2,7 +2,11 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { subscribeToNewsletter, NewsletterState } from "@/app/actions/newsletter";
+import {
+  subscribeToNewsletter,
+  NewsletterState,
+} from "@/app/actions/newsletter";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -22,18 +26,27 @@ function SubmitButton({ buttonText }: { buttonText: string }) {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending} size="lg" className="shrink-0">
+    <AnimatedButton
+      type="submit"
+      animationType="bounce"
+      disabled={pending}
+      size="lg"
+      className="shrink-0"
+    >
       {pending ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : (
         <Mail className="mr-2 h-4 w-4" />
       )}
       {buttonText}
-    </Button>
+    </AnimatedButton>
   );
 }
 
-export function NewsletterSection({ data, siteName = "Our Site" }: NewsletterSectionProps) {
+export function NewsletterSection({
+  data,
+  siteName = "Our Site",
+}: NewsletterSectionProps) {
   const {
     title = "Subscribe to Our Newsletter",
     subtitle = "Get the latest updates and news delivered to your inbox",
@@ -42,7 +55,10 @@ export function NewsletterSection({ data, siteName = "Our Site" }: NewsletterSec
   } = data;
 
   const initialState: NewsletterState = {};
-  const [state, formAction] = useActionState(subscribeToNewsletter, initialState);
+  const [state, formAction] = useActionState(
+    subscribeToNewsletter,
+    initialState,
+  );
 
   return (
     <section className="py-20 px-4 bg-primary text-primary-foreground">
@@ -61,7 +77,7 @@ export function NewsletterSection({ data, siteName = "Our Site" }: NewsletterSec
           <form action={formAction} className="max-w-2xl mx-auto">
             {/* Hidden siteName field */}
             <input type="hidden" name="siteName" value={siteName} />
-            
+
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 type="email"
@@ -78,7 +94,9 @@ export function NewsletterSection({ data, siteName = "Our Site" }: NewsletterSec
             )}
 
             {disclaimer && (
-              <p className="text-sm text-center mt-4 opacity-75">{disclaimer}</p>
+              <p className="text-sm text-center mt-4 opacity-75">
+                {disclaimer}
+              </p>
             )}
           </form>
         )}

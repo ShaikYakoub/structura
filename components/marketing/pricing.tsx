@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 const plans = [
   {
@@ -74,20 +75,29 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="relative"
             >
+              {plan.popular && (
+                <motion.div
+                  animate={{
+                    y: [0, -10, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-50"
+                >
+                  MOST POPULAR ✨
+                </motion.div>
+              )}
               <Card
                 className={`
-                  relative overflow-hidden select-none
+                  relative select-none
                   ${plan.popular ? "border-primary shadow-lg scale-105" : ""}
                 `}
               >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                    <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
-                      MOST POPULAR
-                    </div>
-                  </div>
-                )}
 
                 <CardHeader className="text-center pb-8 pt-8">
                   <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
@@ -113,14 +123,15 @@ export function Pricing() {
                     ))}
                   </ul>
 
-                  <Button
+                  <AnimatedButton
                     asChild
-                    className="w-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-2"
+                    animationType="bounce"
+                    className="w-full border-2"
                     size="lg"
                     variant={plan.popular ? "default" : "outline"}
                   >
                     <Link href="/register">{plan.cta}</Link>
-                  </Button>
+                  </AnimatedButton>
                 </CardContent>
               </Card>
             </motion.div>

@@ -3,13 +3,27 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { submitContactForm, ContactFormState } from "@/app/actions/contact";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, Loader2, Mail, User, MessageSquare, Phone } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  Mail,
+  User,
+  MessageSquare,
+  Phone,
+} from "lucide-react";
 
 interface ContactFormProps {
   data: {
@@ -24,7 +38,13 @@ function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending} className="w-full" size="lg">
+    <AnimatedButton
+      type="submit"
+      animationType="bounce"
+      disabled={pending}
+      className="w-full"
+      size="lg"
+    >
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -36,15 +56,18 @@ function SubmitButton() {
           Send Message
         </>
       )}
-    </Button>
+    </AnimatedButton>
   );
 }
 
-export function ContactForm({ data, siteId = "default-site-id" }: ContactFormProps) {
-  const { 
-    title = "Get in Touch", 
+export function ContactForm({
+  data,
+  siteId = "default-site-id",
+}: ContactFormProps) {
+  const {
+    title = "Get in Touch",
     subtitle = "We'd love to hear from you",
-    successMessage = "Thank you for your message! We'll get back to you soon."
+    successMessage = "Thank you for your message! We'll get back to you soon.",
   } = data;
 
   const initialState: ContactFormState = {};
@@ -57,7 +80,9 @@ export function ContactForm({ data, siteId = "default-site-id" }: ContactFormPro
           <CardHeader className="text-center">
             <CardTitle className="text-3xl">{title}</CardTitle>
             {subtitle && (
-              <CardDescription className="text-base">{subtitle}</CardDescription>
+              <CardDescription className="text-base">
+                {subtitle}
+              </CardDescription>
             )}
           </CardHeader>
 
@@ -89,7 +114,9 @@ export function ContactForm({ data, siteId = "default-site-id" }: ContactFormPro
                     className={state?.errors?.name ? "border-destructive" : ""}
                   />
                   {state?.errors?.name && (
-                    <p className="text-sm text-destructive">{state.errors.name}</p>
+                    <p className="text-sm text-destructive">
+                      {state.errors.name}
+                    </p>
                   )}
                 </div>
 
@@ -108,7 +135,9 @@ export function ContactForm({ data, siteId = "default-site-id" }: ContactFormPro
                     className={state?.errors?.email ? "border-destructive" : ""}
                   />
                   {state?.errors?.email && (
-                    <p className="text-sm text-destructive">{state.errors.email}</p>
+                    <p className="text-sm text-destructive">
+                      {state.errors.email}
+                    </p>
                   )}
                 </div>
 
@@ -116,7 +145,10 @@ export function ContactForm({ data, siteId = "default-site-id" }: ContactFormPro
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center gap-2">
                     <Phone className="h-4 w-4" />
-                    Phone <span className="text-muted-foreground text-sm">(optional)</span>
+                    Phone{" "}
+                    <span className="text-muted-foreground text-sm">
+                      (optional)
+                    </span>
                   </Label>
                   <Input
                     id="phone"
@@ -126,7 +158,9 @@ export function ContactForm({ data, siteId = "default-site-id" }: ContactFormPro
                     className={state?.errors?.phone ? "border-destructive" : ""}
                   />
                   {state?.errors?.phone && (
-                    <p className="text-sm text-destructive">{state.errors.phone}</p>
+                    <p className="text-sm text-destructive">
+                      {state.errors.phone}
+                    </p>
                   )}
                 </div>
 
@@ -142,10 +176,14 @@ export function ContactForm({ data, siteId = "default-site-id" }: ContactFormPro
                     placeholder="Tell us how we can help you..."
                     rows={5}
                     required
-                    className={state?.errors?.message ? "border-destructive" : ""}
+                    className={
+                      state?.errors?.message ? "border-destructive" : ""
+                    }
                   />
                   {state?.errors?.message && (
-                    <p className="text-sm text-destructive">{state.errors.message}</p>
+                    <p className="text-sm text-destructive">
+                      {state.errors.message}
+                    </p>
                   )}
                 </div>
 

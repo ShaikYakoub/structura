@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,9 +48,8 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-800/50 shadow-xl">
+    <Card className="bg-white/60 dark:bg-white/20 backdrop-blur-xl border border-white/30 dark:border-white/20 shadow-xl">
       <CardContent className="pt-6">
-      <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -77,7 +77,11 @@ export function LoginForm() {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <Button type="submit" className="w-full mt-2" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full mt-2 border-2 hover:shadow-lg"
+            disabled={loading}
+          >
             {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>

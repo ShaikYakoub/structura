@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -50,12 +52,21 @@ export function Navbar() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" asChild className="border-2">
+            <AnimatedButton
+              variant="ghost"
+              asChild
+              animationType="none"
+              className="border-2"
+            >
               <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild className="border-2">
+            </AnimatedButton>
+            <AnimatedButton
+              asChild
+              animationType="none"
+              className="border-2"
+            >
               <Link href="/register">Get Started</Link>
-            </Button>
+            </AnimatedButton>
           </div>
 
           {/* Mobile Menu Button */}
@@ -94,12 +105,21 @@ export function Navbar() {
               Templates
             </Link>
             <div className="flex flex-col gap-2 pt-4">
-              <Button variant="outline" asChild className="w-full border-2">
+              <AnimatedButton
+                variant="outline"
+                asChild
+                animationType="none"
+                className="w-full border-2"
+              >
                 <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild className="w-full border-2">
+              </AnimatedButton>
+              <AnimatedButton
+                asChild
+                animationType="none"
+                className="w-full border-2"
+              >
                 <Link href="/register">Get Started</Link>
-              </Button>
+              </AnimatedButton>
             </div>
           </div>
         )}

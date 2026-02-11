@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -132,16 +133,21 @@ export function TemplatePicker({
               </CardHeader>
 
               <CardFooter className="flex gap-2">
-                <Button variant="outline" className="flex-1" asChild>
-                  <a
-                    href={getTemplatePreviewUrl(template.subdomain)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Preview
-                  </a>
-                </Button>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Button variant="outline" className="flex-1" asChild>
+                    <a
+                      href={getTemplatePreviewUrl(template.subdomain)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      Preview
+                    </a>
+                  </Button>
+                </motion.div>
                 <Button
                   className="flex-1"
                   onClick={() => onSelectTemplate(template)}

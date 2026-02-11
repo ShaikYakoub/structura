@@ -3,6 +3,8 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -80,9 +82,14 @@ export function LoginForm() {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <AnimatedButton
+            type="submit"
+            animationType="none"
+            className="w-full border-2"
+            disabled={loading}
+          >
             {loading ? "Signing in..." : "Sign In"}
-          </Button>
+          </AnimatedButton>
         </form>
 
         <div className="mt-4 p-3 bg-blue-50 rounded-md">

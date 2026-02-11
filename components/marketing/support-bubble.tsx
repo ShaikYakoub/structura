@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, X, Mail, MessageCircle } from "lucide-react";
 import {
@@ -18,7 +20,7 @@ export function SupportBubble() {
     <>
       {/* Support Card (appears when open) */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-4 w-80 shadow-2xl z-50 animate-in slide-in-from-bottom-4 bg-white dark:bg-gray-950 border-2">
+        <Card className="fixed bottom-24 right-4 w-80 shadow-2xl z-50 animate-in slide-in-from-bottom-4 bg-white/60 dark:bg-white/20 backdrop-blur-xl border border-white/30 dark:border-white/20">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">How can we help?</CardTitle>
@@ -36,8 +38,9 @@ export function SupportBubble() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button
+            <AnimatedButton
               variant="outline"
+              animationType="bounce"
               className="w-full justify-start border-2"
               asChild
             >
@@ -45,10 +48,11 @@ export function SupportBubble() {
                 <Mail className="mr-2 h-4 w-4" />
                 Email Support
               </a>
-            </Button>
-            
-            <Button
+            </AnimatedButton>
+
+            <AnimatedButton
               variant="outline"
+              animationType="bounce"
               className="w-full justify-start border-2"
               asChild
             >
@@ -56,7 +60,7 @@ export function SupportBubble() {
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Documentation
               </a>
-            </Button>
+            </AnimatedButton>
 
             <div className="pt-2 border-t">
               <p className="text-xs text-muted-foreground text-center">
@@ -70,7 +74,7 @@ export function SupportBubble() {
       {/* Floating Button */}
       <Button
         size="lg"
-        className="fixed bottom-4 right-4 h-14 w-14 rounded-full shadow-lg z-50 hover:scale-110 transition-transform"
+        className="fixed bottom-4 right-4 h-14 w-14 rounded-full shadow-lg z-50 hover:scale-110 transition-transform bg-white hover:bg-gray-50 border-2 border-gray-200"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? (

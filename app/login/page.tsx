@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { LoginForm } from "@/components/login-form";
+// import { LoginForm } from "@/components/login-form";
+import { LoginForm } from "@/components/login-form-fixed";
 import Link from "next/link";
 
 export default async function LoginPage() {

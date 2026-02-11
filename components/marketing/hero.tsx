@@ -1,9 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 export function Hero() {
   const scrollToSection = (id: string) => {
@@ -14,7 +15,7 @@ export function Hero() {
     <section className="relative overflow-hidden py-12 md:py-20 lg:py-24">
       {/* Background gradient */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-primary/5 via-background to-background" />
-      
+
       <div className="container mx-auto px-6 md:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: Content */}
@@ -61,21 +62,27 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <Button size="lg" asChild className="text-base transition-all duration-200 hover:shadow-lg hover:scale-[1.02] border-2">
+              <AnimatedButton
+                size="lg"
+                asChild
+                animationType="bounce"
+                className="text-base border-2"
+              >
                 <Link href="/register">
                   Start Building for Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-              </Button>
-              <Button
+              </AnimatedButton>
+              <AnimatedButton
                 size="lg"
                 variant="outline"
-                className="text-base transition-all duration-200 hover:shadow-md hover:scale-[1.02] border-2"
+                animationType="bounce"
+                className="text-base border-2"
                 onClick={() => scrollToSection("showcase")}
               >
                 <Play className="mr-2 h-5 w-5" />
                 View Templates
-              </Button>
+              </AnimatedButton>
             </motion.div>
 
             <motion.p
@@ -89,12 +96,7 @@ export function Hero() {
           </motion.div>
 
           {/* Right: Browser Mockup */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="relative"
-          >
+          <div className="relative">
             {/* Browser Window */}
             <div className="relative rounded-lg border-2 shadow-2xl bg-background overflow-hidden">
               {/* Browser Chrome */}
@@ -116,26 +118,26 @@ export function Hero() {
                 {/* Grid pattern overlay - More visible */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000010_1px,transparent_1px),linear-gradient(to_bottom,#00000010_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:linear-gradient(to_bottom,white,transparent)]" />
                 <div className="relative z-10">
-                <div className="grid grid-cols-12 gap-4 h-full">
-                  {/* Left Sidebar */}
-                  <div className="col-span-3 bg-muted/50 rounded-lg p-4 space-y-2">
-                    <div className="h-3 bg-primary/30 rounded w-3/4" />
-                    <div className="h-2 bg-muted rounded w-full" />
-                    <div className="h-2 bg-muted rounded w-full" />
-                    <div className="h-2 bg-muted rounded w-2/3" />
-                  </div>
+                  <div className="grid grid-cols-12 gap-4 h-full">
+                    {/* Left Sidebar */}
+                    <div className="col-span-3 bg-muted/50 rounded-lg p-4 space-y-2">
+                      <div className="h-3 bg-primary/30 rounded w-3/4" />
+                      <div className="h-2 bg-muted rounded w-full" />
+                      <div className="h-2 bg-muted rounded w-full" />
+                      <div className="h-2 bg-muted rounded w-2/3" />
+                    </div>
 
-                  {/* Main Canvas */}
-                  <div className="col-span-9 bg-background rounded-lg p-6 space-y-4">
-                    <div className="h-6 bg-primary/20 rounded w-1/2" />
-                    <div className="h-24 bg-muted/50 rounded" />
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="h-16 bg-muted/30 rounded" />
-                      <div className="h-16 bg-muted/30 rounded" />
-                      <div className="h-16 bg-muted/30 rounded" />
+                    {/* Main Canvas */}
+                    <div className="col-span-9 bg-background rounded-lg p-6 space-y-4">
+                      <div className="h-6 bg-primary/20 rounded w-1/2" />
+                      <div className="h-24 bg-muted/50 rounded" />
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="h-16 bg-muted/30 rounded" />
+                        <div className="h-16 bg-muted/30 rounded" />
+                        <div className="h-16 bg-muted/30 rounded" />
+                      </div>
                     </div>
                   </div>
-                </div>
                 </div>
               </div>
             </div>
@@ -154,7 +156,7 @@ export function Hero() {
             >
               Live Preview ✨
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

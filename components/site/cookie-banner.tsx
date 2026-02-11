@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Cookie, X } from "lucide-react";
@@ -42,17 +44,23 @@ export function CookieBanner() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleAccept} size="sm" className="flex-1">
+            <AnimatedButton
+              onClick={handleAccept}
+              animationType="bounce"
+              size="sm"
+              className="flex-1"
+            >
               Accept
-            </Button>
-            <Button
+            </AnimatedButton>
+            <AnimatedButton
               onClick={handleDecline}
+              animationType="bounce"
               size="sm"
               variant="outline"
               className="flex-1"
             >
               Decline
-            </Button>
+            </AnimatedButton>
           </div>
         </div>
         <Button

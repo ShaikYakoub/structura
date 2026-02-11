@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Save, Loader2 } from "lucide-react";
@@ -26,7 +33,9 @@ export function PageSettings({ pageId, initialData }: PageSettingsProps) {
   const [name, setName] = useState(initialData.name);
   const [slug, setSlug] = useState(initialData.slug);
   const [seoTitle, setSeoTitle] = useState(initialData.seoTitle || "");
-  const [seoDescription, setSeoDescription] = useState(initialData.seoDescription || "");
+  const [seoDescription, setSeoDescription] = useState(
+    initialData.seoDescription || "",
+  );
   const [seoKeywords, setSeoKeywords] = useState(initialData.seoKeywords || "");
   const [seoImage, setSeoImage] = useState(initialData.seoImage || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -83,7 +92,9 @@ export function PageSettings({ pageId, initialData }: PageSettingsProps) {
             <Input
               id="slug"
               value={slug}
-              onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+              onChange={(e) =>
+                setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
+              }
               placeholder="home"
             />
             <p className="text-xs text-muted-foreground">
@@ -160,14 +171,19 @@ export function PageSettings({ pageId, initialData }: PageSettingsProps) {
         </CardContent>
       </Card>
 
-      <Button onClick={handleSave} disabled={isSaving} className="w-full">
-        {isSaving ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Save className="mr-2 h-4 w-4" />
-        )}
-        Save Settings
-      </Button>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
+        <Button onClick={handleSave} disabled={isSaving} className="w-full">
+          {isSaving ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="mr-2 h-4 w-4" />
+          )}
+          Save Settings
+        </Button>
+      </motion.div>
     </div>
   );
 }

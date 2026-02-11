@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +34,11 @@ interface NavManagerProps {
   pages: Page[];
 }
 
-export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps) {
+export function NavManager({
+  siteId,
+  currentNavigation,
+  pages,
+}: NavManagerProps) {
   const [navItems, setNavItems] = useState<NavItem[]>(currentNavigation);
   const [isAdding, setIsAdding] = useState(false);
   const [newItem, setNewItem] = useState<NavItem>({
@@ -83,10 +88,13 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
   const moveItem = (index: number, direction: "up" | "down") => {
     const newItems = [...navItems];
     const targetIndex = direction === "up" ? index - 1 : index + 1;
-    
+
     if (targetIndex < 0 || targetIndex >= newItems.length) return;
-    
-    [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
+
+    [newItems[index], newItems[targetIndex]] = [
+      newItems[targetIndex],
+      newItems[index],
+    ];
     setNavItems(newItems);
   };
 
@@ -133,12 +141,12 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </div>
-                
+
                 <div className="flex-1">
                   <p className="font-medium text-sm">{item.label}</p>
                   <p className="text-xs text-muted-foreground">{item.href}</p>
                 </div>
-                
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -165,7 +173,9 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
                 id="label"
                 placeholder="Home, About, Contact..."
                 value={newItem.label}
-                onChange={(e) => setNewItem({ ...newItem, label: e.target.value })}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, label: e.target.value })
+                }
               />
             </div>
 
@@ -173,7 +183,7 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
               <Label htmlFor="type">Link Type</Label>
               <Select
                 value={newItem.type}
-                onValueChange={(value: "page" | "external") => 
+                onValueChange={(value: "page" | "external") =>
                   setNewItem({ ...newItem, type: value, href: "" })
                 }
               >
@@ -191,11 +201,13 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
               <Label htmlFor="href">
                 {newItem.type === "page" ? "Select Page" : "URL"}
               </Label>
-              
+
               {newItem.type === "page" ? (
                 <Select
                   value={newItem.href}
-                  onValueChange={(value) => setNewItem({ ...newItem, href: value })}
+                  onValueChange={(value) =>
+                    setNewItem({ ...newItem, href: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a page..." />
@@ -203,8 +215,12 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
                   <SelectContent>
                     <SelectItem value="/">Home</SelectItem>
                     {pages.map((page) => (
-                      <SelectItem key={page.id} value={page.slug === "/" ? "/" : `/${page.slug}`}>
-                        {page.name} ({page.slug === "/" ? "/" : `/${page.slug}`})
+                      <SelectItem
+                        key={page.id}
+                        value={page.slug === "/" ? "/" : `/${page.slug}`}
+                      >
+                        {page.name} ({page.slug === "/" ? "/" : `/${page.slug}`}
+                        )
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -214,31 +230,52 @@ export function NavManager({ siteId, currentNavigation, pages }: NavManagerProps
                   id="href"
                   placeholder="https://example.com"
                   value={newItem.href}
-                  onChange={(e) => setNewItem({ ...newItem, href: e.target.value })}
+                  onChange={(e) =>
+                    setNewItem({ ...newItem, href: e.target.value })
+                  }
                 />
               )}
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleAddItem} className="flex-1">
-                <Plus className="mr-2 h-4 w-4" /> Add Link
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsAdding(false);
-                  setNewItem({ label: "", href: "", type: "page" });
-                }}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                Cancel
-              </Button>
+                <Button onClick={handleAddItem} className="flex-1">
+                  <Plus className="mr-2 h-4 w-4" /> Add Link
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsAdding(false);
+                    setNewItem({ label: "", href: "", type: "page" });
+                  }}
+                >
+                  Cancel
+                </Button>
+              </motion.div>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <Button onClick={() => setIsAdding(true)} variant="outline" className="w-full">
-          <Plus className="mr-2 h-4 w-4" /> Add Navigation Link
-        </Button>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Button
+            onClick={() => setIsAdding(true)}
+            variant="outline"
+            className="w-full"
+          >
+            <Plus className="mr-2 h-4 w-4" /> Add Navigation Link
+          </Button>
+        </motion.div>
       )}
     </div>
   );
