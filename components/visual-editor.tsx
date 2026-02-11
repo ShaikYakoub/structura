@@ -3,18 +3,24 @@
 import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 import type { Site, Page } from "@prisma/client";
-import { Renderer } from "@/components/renderer";
-import { SectionEditor } from "@/components/section-editor";
 import { Button } from "@/components/ui/button";
 import { updatePageContent } from "@/lib/actions/pages";
 import { saveDraft } from "@/app/actions/publish";
 import { toast } from "sonner";
-import { Save, PlusCircle } from "lucide-react";
+import { Save } from "lucide-react";
 import Link from "next/link";
 import { componentRegistry, getDefaultData } from "@/lib/registry";
 import { PageManager } from "@/components/editor/page-manager";
 import { LayerManager } from "@/components/editor/sidebar/layer-manager";
-import { ActionListInput } from "@/components/editor/inputs/action-list-input";
+import { ComponentLibrary } from "@/components/editor/sidebar/component-library";
+import { PropertiesPanel } from "@/components/editor/sidebar/properties-panel";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { DeviceToggle, DeviceMode } from "@/components/editor/device-toggle";
+import { DeviceFrame } from "@/components/editor/device-frame";
+import { MobileSidebar } from "@/components/editor/mobile-sidebar";
+import { MobileFAB } from "@/components/editor/mobile-fab";
+import { MobileRecommendationBanner } from "@/components/editor/mobile-recommendation-banner";
+import { BlockWrapper } from "@/components/editor/canvas/block-wrapper";
 
 interface VisualEditorProps {
   site: Site;
@@ -33,6 +39,11 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   const [sections, setSections] = useState<Section[]>([]);
   const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
+  const [deviceMode, setDeviceMode] = useState<DeviceMode>("desktop");
+  const [showLayersSidebar, setShowLayersSidebar] = useState(false);
+  const [showPropertiesSidebar, setShowPropertiesSidebar] = useState(false);
+  const [showComponentLibrary, setShowComponentLibrary] = useState(false);
+  const isMobileDevice = useMediaQuery("(max-width: 768px)");
 
   // Load sections when page changes
   useEffect(() => {
@@ -51,6 +62,12 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
       setSelectedSectionId(undefined);
     }
   }, [currentPage?.id]);
+
+  useEffect(() => {
+    if (isMobileDevice && deviceMode !== "mobile") {
+      setDeviceMode("mobile");
+    }
+  }, [isMobileDevice, deviceMode]);
 
   const handleSectionUpdate = (id: string, updatedData: any) => {
     setSections(prevSections =>
@@ -90,6 +107,31 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
     }
   };
 
+  const handleMoveSection = (sectionId: string, direction: "up" | "down") => {
+    setSections((prevSections) => {
+      const index = prevSections.findIndex((section) => section.id === sectionId);
+      if (index === -1) return prevSections;
+
+      if (direction === "up" && index === 0) return prevSections;
+      if (direction === "down" && index === prevSections.length - 1) return prevSections;
+
+      const newSections = [...prevSections];
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+      [newSections[index], newSections[targetIndex]] = [
+        newSections[targetIndex],
+        newSections[index],
+      ];
+
+      if (currentPage) {
+        void saveDraft(currentPage.id, { sections: newSections });
+        toast.success(`Section moved ${direction}`);
+      }
+
+      return newSections;
+    });
+  };
+
   const handleToggleVisibility = (id: string) => {
     setSections(prevSections =>
       prevSections.map(section =>
@@ -122,15 +164,10 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   };
 
   const selectedSection = sections.find(s => s.id === selectedSectionId);
-
-  // Get available component types from registry
-  const availableComponents = Object.entries(componentRegistry).map(
-    ([key, entry]) => ({
-      key,
-      name: entry.schema.name,
-      category: entry.schema.category,
-    }),
-  );
+  const handleSelectedSectionUpdate = (data: any) => {
+    if (!selectedSection) return;
+    handleSectionUpdate(selectedSection.id, data);
+  };
 
   if (!currentPage) {
     return (
@@ -144,49 +181,57 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
 
   return (
     <div className="h-screen flex flex-col">
+      {isMobileDevice && <MobileRecommendationBanner />}
+
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Visual Editor</h1>
-            <p className="text-sm text-gray-500">{site.name}</p>
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Visual Editor</h1>
+              <p className="text-sm text-gray-500">{site.name}</p>
+            </div>
+            <PageManager
+              siteId={site.id}
+              currentPageId={currentPage.id}
+              onPageChange={handlePageChange}
+            />
           </div>
-          <PageManager
-            siteId={site.id}
-            currentPageId={currentPage.id}
-            onPageChange={handlePageChange}
-          />
+
+          {!isMobileDevice && (
+            <DeviceToggle value={deviceMode} onChange={setDeviceMode} />
+          )}
+
+          <div className="flex gap-2">
+            <Link href={`/app/site/${site.id}`}>
+              <Button variant="outline">Back</Button>
+            </Link>
+            <Button onClick={handleSave} disabled={saving}>
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Link href={`/app/site/${site.id}`}>
-            <Button variant="outline">Back</Button>
-          </Link>
-          <Button onClick={handleSave} disabled={saving}>
-            <Save className="w-4 h-4 mr-2" />
-            {saving ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
-      </div>
+      </header>
 
       {/* Main Content - Three Column Layout */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar - Layer Manager */}
-        <div className="w-64 border-r bg-background overflow-y-auto">
-          <LayerManager
-            sections={sections}
-            onReorder={handleReorder}
-            onToggleVisibility={handleToggleVisibility}
-            onDelete={handleDeleteSection}
-            onSelectSection={setSelectedSectionId}
-            selectedSectionId={selectedSectionId}
-          />
-        </div>
+        {!isMobileDevice && (
+          <aside className="w-64 border-r bg-background overflow-y-auto">
+            <LayerManager
+              sections={sections}
+              onReorder={handleReorder}
+              onToggleVisibility={handleToggleVisibility}
+              onDelete={handleDeleteSection}
+              onSelectSection={setSelectedSectionId}
+              selectedSectionId={selectedSectionId}
+            />
+          </aside>
+        )}
 
-        {/* Center - Canvas */}
-        <div className="flex-1 overflow-y-auto bg-gray-100 p-8">
-          <div className="max-w-5xl mx-auto">
+        <DeviceFrame deviceMode={deviceMode}>
+          <div className="w-full mx-auto">
             <div className="bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200">
-              {/* Browser Chrome */}
               <div className="bg-gray-100 border-b border-gray-200 px-4 py-2 flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-400"></div>
@@ -198,72 +243,99 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
                 </div>
               </div>
 
-              {/* Preview */}
               <div className="bg-white">
-                {sections.filter(section => section.visible !== false).map((section) => {
+                {sections.map((section, index) => {
                   const Component = componentRegistry[section.type]?.component;
                   if (!Component) return null;
-                  
+
                   return (
-                    <div
+                    <BlockWrapper
                       key={section.id}
-                      className={`${
-                        selectedSectionId === section.id
-                          ? "ring-2 ring-primary"
-                          : ""
-                      }`}
-                      onClick={() => setSelectedSectionId(section.id)}
+                      section={section}
+                      isSelected={selectedSectionId === section.id}
+                      onSelect={setSelectedSectionId}
+                      onMoveUp={() => handleMoveSection(section.id, "up")}
+                      onMoveDown={() => handleMoveSection(section.id, "down")}
+                      onDelete={() => handleDeleteSection(section.id)}
+                      onToggleVisibility={() => handleToggleVisibility(section.id)}
+                      isMobile={isMobileDevice}
+                      isFirst={index === 0}
+                      isLast={index === sections.length - 1}
                     >
                       <Component {...section.data} />
-                    </div>
+                    </BlockWrapper>
                   );
                 })}
               </div>
             </div>
           </div>
-        </div>
+        </DeviceFrame>
 
-        {/* Right Sidebar - Properties Panel */}
-        <div className="w-80 border-l bg-background overflow-y-auto">
-          <div className="p-4">
-            {/* Add Section Button */}
-            <div className="mb-4">
-              <h3 className="text-sm font-semibold mb-2">Add Section</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {Object.entries(componentRegistry).map(([key, entry]) => (
-                  <Button
-                    key={key}
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleAddSection(key)}
-                    className="justify-start text-xs"
-                  >
-                    <PlusCircle className="h-3 w-3 mr-1" />
-                    {entry.schema.name}
-                  </Button>
-                ))}
-              </div>
+        {!isMobileDevice && (
+          <aside className="w-80 border-l bg-background overflow-y-auto">
+            <ComponentLibrary onSelectComponent={handleAddSection} />
+            <div className="border-t">
+              <PropertiesPanel
+                selectedSection={selectedSection}
+                onUpdateProps={handleSelectedSectionUpdate}
+              />
             </div>
+          </aside>
+        )}
 
-            {/* Section Properties */}
-            {selectedSection ? (
-              <div className="border-t pt-4">
-                <h3 className="text-lg font-semibold mb-4">
-                  {componentRegistry[selectedSection.type]?.schema?.name}
-                </h3>
+        {isMobileDevice && (
+          <MobileFAB
+            onLayersClick={() => setShowLayersSidebar(true)}
+            onPropertiesClick={() => setShowPropertiesSidebar(true)}
+            onAddClick={() => setShowComponentLibrary(true)}
+          />
+        )}
 
-                <SectionEditor
-                  section={selectedSection}
-                  onChange={(data) => handleSectionUpdate(selectedSection.id, data)}
-                />
-              </div>
-            ) : (
-              <div className="border-t pt-4 text-center text-muted-foreground text-sm">
-                Select a section to edit its properties
-              </div>
-            )}
-          </div>
-        </div>
+        {isMobileDevice && (
+          <>
+            <MobileSidebar
+              isOpen={showLayersSidebar}
+              onClose={() => setShowLayersSidebar(false)}
+              title="Layers"
+            >
+              <LayerManager
+                sections={sections}
+                onReorder={handleReorder}
+                onToggleVisibility={handleToggleVisibility}
+                onDelete={handleDeleteSection}
+                onSelectSection={(id) => {
+                  setSelectedSectionId(id);
+                  setShowLayersSidebar(false);
+                }}
+                selectedSectionId={selectedSectionId}
+              />
+            </MobileSidebar>
+
+            <MobileSidebar
+              isOpen={showPropertiesSidebar}
+              onClose={() => setShowPropertiesSidebar(false)}
+              title="Properties"
+            >
+              <PropertiesPanel
+                selectedSection={selectedSection}
+                onUpdateProps={handleSelectedSectionUpdate}
+              />
+            </MobileSidebar>
+
+            <MobileSidebar
+              isOpen={showComponentLibrary}
+              onClose={() => setShowComponentLibrary(false)}
+              title="Add Component"
+            >
+              <ComponentLibrary
+                onSelectComponent={(type) => {
+                  handleAddSection(type);
+                  setShowComponentLibrary(false);
+                }}
+              />
+            </MobileSidebar>
+          </>
+        )}
       </div>
     </div>
   );
