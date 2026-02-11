@@ -36,15 +36,21 @@ export function CookieBanner() {
           <div>
             <h3 className="font-semibold">Cookie Consent</h3>
             <p className="text-sm text-muted-foreground">
-              We use cookies to enhance your browsing experience and analyze site traffic. By
-              clicking &quot;Accept&quot;, you consent to our use of cookies.
+              We use cookies to enhance your browsing experience and analyze
+              site traffic. By clicking &quot;Accept&quot;, you consent to our
+              use of cookies.
             </p>
           </div>
           <div className="flex gap-2">
             <Button onClick={handleAccept} size="sm" className="flex-1">
               Accept
             </Button>
-            <Button onClick={handleDecline} size="sm" variant="outline" className="flex-1">
+            <Button
+              onClick={handleDecline}
+              size="sm"
+              variant="outline"
+              className="flex-1"
+            >
               Decline
             </Button>
           </div>

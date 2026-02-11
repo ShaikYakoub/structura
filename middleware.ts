@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 // Your main domain configuration
 const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "shaikyakoub.com";
@@ -26,6 +27,33 @@ export default async function middleware(req: NextRequest) {
 
   // Get the pathname (e.g. /, /about, /blog/first-post)
   const pathname = url.pathname;
+
+  // ADMIN PROTECTION: Protect /admin routes
+  if (pathname.startsWith("/admin")) {
+    const token = await getToken({
+      req: req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || "your@email.com";
+
+    // If not logged in as super admin, return 404 (not 403 for security)
+    if (token?.email !== superAdminEmail) {
+      return NextResponse.rewrite(new URL("/404", req.url));
+    }
+  }
+
+  // BAN CHECK: Check if user is banned on protected routes
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/editor")) {
+    const token = await getToken({
+      req: req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (token?.bannedAt) {
+      return NextResponse.redirect(new URL("/banned", req.url));
+    }
+  }
 
   // Normalize hostname (remove www, handle ports for local dev)
   const normalizedHostname = hostname

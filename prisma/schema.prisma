@@ -23,6 +23,10 @@ model User {
   razorpayCurrentPeriodEnd DateTime?
   isPro                   Boolean   @default(false)
   
+  // Admin & Moderation
+  bannedAt      DateTime?
+  banReason     String?
+  
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
@@ -32,6 +36,7 @@ model User {
   @@index([email])
   @@index([razorpayCustomerId])
   @@index([razorpaySubscriptionId])
+  @@index([bannedAt])
 }
 
 model Account {
@@ -105,6 +110,11 @@ model Site {
   customBodyCode      String?
   cookieBannerEnabled Boolean  @default(true)
   
+  // Moderation
+  banned       Boolean   @default(false)
+  bannedAt     DateTime?
+  banReason    String?
+  
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   description  String?
@@ -117,6 +127,7 @@ model Site {
   @@index([tenantId])
   @@index([isTemplate])
   @@index([templateCategory])
+  @@index([banned])
 }
 
 model Page {
@@ -159,4 +170,18 @@ model SiteAnalytics {
   @@unique([siteId, date, path])
   @@index([siteId, date])
   @@index([siteId])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  adminEmail  String
+  action      String
+  targetId    String
+  targetType  String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  
+  @@index([adminEmail])
+  @@index([targetId])
+  @@index([createdAt])
 }

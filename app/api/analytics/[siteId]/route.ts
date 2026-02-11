@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ siteId: string }> }
+  { params }: { params: Promise<{ siteId: string }> },
 ) {
   try {
     const { siteId } = await params;
@@ -61,7 +61,7 @@ export async function GET(
     console.error("Error fetching analytics:", error);
     return NextResponse.json(
       { error: "Failed to fetch analytics" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
