@@ -100,10 +100,16 @@ model Site {
   templateDescription String?
   thumbnailUrl        String?
   
+  // Custom Code Injection
+  customHeadCode      String?
+  customBodyCode      String?
+  cookieBannerEnabled Boolean  @default(true)
+  
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   description  String?
   pages        Page[]
+  analytics    SiteAnalytics[]
   tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([subdomain])
@@ -138,4 +144,19 @@ model Page {
   @@unique([siteId, slug])
   @@index([siteId])
   @@index([siteId, isHomePage])
+}
+
+model SiteAnalytics {
+  id        String   @id @default(cuid())
+  siteId    String   @db.Uuid
+  date      DateTime @db.Date
+  path      String
+  views     Int      @default(1)
+  createdAt DateTime @default(now())
+  
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  
+  @@unique([siteId, date, path])
+  @@index([siteId, date])
+  @@index([siteId])
 }

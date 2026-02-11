@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { Navbar } from "@/components/site/navbar";
 import { StyleInjector } from "@/components/site/style-injector";
+import { AnalyticsTracker } from "@/components/analytics/tracker";
+import { CookieBanner } from "@/components/site/cookie-banner";
 
 interface SiteLayoutProps {
   children: React.ReactNode;
@@ -28,6 +30,9 @@ async function getSiteData(siteIdentifier: string) {
       styles: true,
       subdomain: true,
       customDomain: true,
+      customHeadCode: true,
+      customBodyCode: true,
+      cookieBannerEnabled: true,
     },
   });
 
@@ -48,6 +53,12 @@ export default async function SiteLayout({ children, params }: SiteLayoutProps) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <StyleInjector styles={stylesData as any} />
+        {site.customHeadCode && (
+          <div
+            dangerouslySetInnerHTML={{ __html: site.customHeadCode }}
+            suppressHydrationWarning
+          />
+        )}
       </head>
       <body className="min-h-screen bg-background font-body text-foreground antialiased">
         <Navbar
@@ -57,6 +68,14 @@ export default async function SiteLayout({ children, params }: SiteLayoutProps) 
           bgColor={site.navColor}
         />
         {children}
+        <AnalyticsTracker siteId={site.id} />
+        {site.cookieBannerEnabled && <CookieBanner />}
+        {site.customBodyCode && (
+          <div
+            dangerouslySetInnerHTML={{ __html: site.customBodyCode }}
+            suppressHydrationWarning
+          />
+        )}
       </body>
     </html>
   );
