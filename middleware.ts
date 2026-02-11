@@ -44,7 +44,10 @@ export async function middleware(req: NextRequest) {
   // Determine subdomain based on environment
   if (hostname.includes("localhost")) {
     // Local development: app.localhost:3000 or sub.localhost:3000
-    subdomain = hostnameParts[0];
+    // Only extract subdomain if there are at least 2 parts (e.g., "app.localhost:3000")
+    if (hostnameParts.length >= 2) {
+      subdomain = hostnameParts[0];
+    }
   } else {
     // Production: sub.shaikyakoub.com
     // If hostname has more than 2 parts (e.g., sub.shaikyakoub.com), extract subdomain
