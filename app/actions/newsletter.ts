@@ -1,9 +1,11 @@
 "use server";
 
 import { z } from "zod";
+import { sendNewsletterEmail } from "./send-email";
 
 const newsletterSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
+  siteName: z.string().min(1, "Site name is required"),
 });
 
 export type NewsletterState = {
@@ -15,10 +17,13 @@ export async function subscribeToNewsletter(
   prevState: NewsletterState,
   formData: FormData
 ): Promise<NewsletterState> {
-  const email = formData.get("email");
+  const rawData = {
+    email: formData.get("email"),
+    siteName: formData.get("siteName"),
+  };
 
-  // Validate email
-  const validatedFields = newsletterSchema.safeParse({ email });
+  // Validate fields
+  const validatedFields = newsletterSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
     return {
@@ -26,17 +31,26 @@ export async function subscribeToNewsletter(
     };
   }
 
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    // Send real email using Resend
+    const result = await sendNewsletterEmail(
+      validatedFields.data.email,
+      validatedFields.data.siteName
+    );
 
-  // Here you would typically:
-  // 1. Save to database
-  // 2. Add to email marketing service (Mailchimp, ConvertKit, etc.)
-  // await prisma.newsletterSubscriber.create({ data: { email: validatedFields.data.email } });
+    if (!result.success) {
+      return {
+        error: result.error || "Failed to subscribe. Please try again later.",
+      };
+    }
 
-  console.log("Newsletter subscription:", validatedFields.data.email);
-
-  return {
-    success: "Thank you for subscribing! Check your inbox for confirmation.",
-  };
+    return {
+      success: result.message,
+    };
+  } catch (error) {
+    console.error("Error subscribing to newsletter:", error);
+    return {
+      error: "Failed to subscribe. Please try again later.",
+    };
+  }
 }

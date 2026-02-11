@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, Loader2, Mail, User, MessageSquare } from "lucide-react";
+import { CheckCircle2, Loader2, Mail, User, MessageSquare, Phone } from "lucide-react";
 
 interface ContactFormProps {
   data: {
@@ -17,6 +17,7 @@ interface ContactFormProps {
     subtitle?: string;
     successMessage?: string;
   };
+  siteId?: string; // Pass from server
 }
 
 function SubmitButton() {
@@ -39,7 +40,7 @@ function SubmitButton() {
   );
 }
 
-export function ContactForm({ data }: ContactFormProps) {
+export function ContactForm({ data, siteId = "default-site-id" }: ContactFormProps) {
   const { 
     title = "Get in Touch", 
     subtitle = "We'd love to hear from you",
@@ -65,11 +66,14 @@ export function ContactForm({ data }: ContactFormProps) {
               <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
                 <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
                 <AlertDescription className="text-green-800 dark:text-green-200">
-                  {successMessage}
+                  {state.success}
                 </AlertDescription>
               </Alert>
             ) : (
               <form action={formAction} className="space-y-6">
+                {/* Hidden siteId field */}
+                <input type="hidden" name="siteId" value={siteId} />
+
                 {/* Name Field */}
                 <div className="space-y-2">
                   <Label htmlFor="name" className="flex items-center gap-2">
@@ -105,6 +109,24 @@ export function ContactForm({ data }: ContactFormProps) {
                   />
                   {state?.errors?.email && (
                     <p className="text-sm text-destructive">{state.errors.email}</p>
+                  )}
+                </div>
+
+                {/* Phone Field (Optional) */}
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    Phone <span className="text-muted-foreground text-sm">(optional)</span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+1 (555) 000-0000"
+                    className={state?.errors?.phone ? "border-destructive" : ""}
+                  />
+                  {state?.errors?.phone && (
+                    <p className="text-sm text-destructive">{state.errors.phone}</p>
                   )}
                 </div>
 

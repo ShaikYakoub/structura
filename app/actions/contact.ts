@@ -1,12 +1,15 @@
 "use server";
 
 import { z } from "zod";
+import { sendContactEmail } from "./send-email";
 
 // Validation schema
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   message: z.string().min(10, "Message must be at least 10 characters"),
+  phone: z.string().optional(),
+  siteId: z.string().min(1, "Site ID is required"),
 });
 
 export type ContactFormState = {
@@ -15,6 +18,7 @@ export type ContactFormState = {
     name?: string;
     email?: string;
     message?: string;
+    phone?: string;
   };
 };
 
@@ -27,6 +31,8 @@ export async function submitContactForm(
     name: formData.get("name"),
     email: formData.get("email"),
     message: formData.get("message"),
+    phone: formData.get("phone"),
+    siteId: formData.get("siteId"),
   };
 
   // Validate with Zod
@@ -38,31 +44,25 @@ export async function submitContactForm(
     };
   }
 
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  // Here you would typically:
-  // 1. Save to database
-  // 2. Send email notification
-  // 3. Integrate with CRM
-  
   try {
-    // Example: Save to database
-    // await prisma.contactSubmission.create({
-    //   data: validatedFields.data,
-    // });
+    // Send real email using Resend
+    const result = await sendContactEmail(validatedFields.data.siteId, {
+      name: validatedFields.data.name,
+      email: validatedFields.data.email,
+      message: validatedFields.data.message,
+      phone: validatedFields.data.phone,
+    });
 
-    // Example: Send email (using Resend, SendGrid, etc.)
-    // await sendEmail({
-    //   to: 'admin@example.com',
-    //   subject: 'New Contact Form Submission',
-    //   body: `Name: ${validatedFields.data.name}\nEmail: ${validatedFields.data.email}\nMessage: ${validatedFields.data.message}`,
-    // });
-
-    console.log("Contact form submitted:", validatedFields.data);
+    if (!result.success) {
+      return {
+        errors: {
+          message: result.error || "Failed to send email. Please try again later.",
+        },
+      };
+    }
 
     return {
-      success: "Thank you for your message! We'll get back to you soon.",
+      success: result.message,
     };
   } catch (error) {
     console.error("Error submitting contact form:", error);

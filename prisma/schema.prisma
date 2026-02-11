@@ -124,6 +124,13 @@ model Page {
   siteId           String    @db.Uuid
   isPublished      Boolean   @default(false)
   isHomePage       Boolean   @default(false)
+  
+  // SEO Fields
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String?
+  seoImage         String?
+  
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   site             Site      @relation(fields: [siteId], references: [id], onDelete: Cascade)

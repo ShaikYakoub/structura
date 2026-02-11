@@ -15,6 +15,7 @@ interface NewsletterSectionProps {
     buttonText?: string;
     disclaimer?: string;
   };
+  siteName?: string; // Pass from server
 }
 
 function SubmitButton({ buttonText }: { buttonText: string }) {
@@ -32,7 +33,7 @@ function SubmitButton({ buttonText }: { buttonText: string }) {
   );
 }
 
-export function NewsletterSection({ data }: NewsletterSectionProps) {
+export function NewsletterSection({ data, siteName = "Our Site" }: NewsletterSectionProps) {
   const {
     title = "Subscribe to Our Newsletter",
     subtitle = "Get the latest updates and news delivered to your inbox",
@@ -58,6 +59,9 @@ export function NewsletterSection({ data }: NewsletterSectionProps) {
           </Alert>
         ) : (
           <form action={formAction} className="max-w-2xl mx-auto">
+            {/* Hidden siteName field */}
+            <input type="hidden" name="siteName" value={siteName} />
+            
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 type="email"
