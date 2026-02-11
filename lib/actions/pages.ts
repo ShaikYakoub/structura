@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/audit-logger";
 
 // Validate slug format
 function isValidSlug(slug: string): boolean {
@@ -21,7 +22,7 @@ function generateSlug(name: string): string {
 // Create a new page
 export async function createPage(siteId: string, name: string, slug: string) {
   const session = await auth();
-  if (!session) {
+  if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
 
@@ -70,6 +71,20 @@ export async function createPage(siteId: string, name: string, slug: string) {
       draftContent: { sections: [] },
       isPublished: false,
       isHomePage: slug === "/" || slug === "",
+    },
+  });
+
+  // Log activity
+  logActivity({
+    siteId,
+    userId: session.user.id!,
+    action: "PAGE_CREATE",
+    entityId: page.id,
+    entityType: "Page",
+    details: {
+      pageTitle: name,
+      pageSlug: slug,
+      isHomePage: page.isHomePage,
     },
   });
 
@@ -168,7 +183,7 @@ export async function updatePageMetadata(
   data: { name?: string; slug?: string; isPublished?: boolean },
 ) {
   const session = await auth();
-  if (!session) {
+  if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
 
@@ -228,6 +243,23 @@ export async function updatePageMetadata(
     data: updateData,
   });
 
+  // Log page metadata update
+  if (Object.keys(updateData).length > 0) {
+    logActivity({
+      siteId: page.siteId,
+      userId: session.user!.id,
+      action: "PAGE_UPDATE",
+      entityId: pageId,
+      entityType: "Page",
+      details: {
+        pageTitle: data.name || page.name,
+        previousSlug: page.slug,
+        newSlug: data.slug,
+        changes: Object.keys(updateData),
+      },
+    });
+  }
+
   revalidatePath(`/app/site/${page.siteId}/editor`);
   revalidatePath(`/site/${page.site.subdomain}`);
 }
@@ -235,7 +267,7 @@ export async function updatePageMetadata(
 // Delete a page
 export async function deletePage(pageId: string) {
   const session = await auth();
-  if (!session) {
+  if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
 
@@ -255,6 +287,19 @@ export async function deletePage(pageId: string) {
   if (page.isHomePage) {
     throw new Error("Cannot delete home page");
   }
+
+  // Log activity before deletion
+  logActivity({
+    siteId: page.siteId,
+    userId: session.user.id!,
+    action: "PAGE_DELETE",
+    entityId: pageId,
+    entityType: "Page",
+    details: {
+      pageTitle: page.name,
+      pageSlug: page.slug,
+    },
+  });
 
   await prisma.page.delete({
     where: { id: pageId },

@@ -1,9 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-
-// Your main domain configuration
-const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "shaikyakoub.com";
-const APP_SUBDOMAIN = process.env.NEXT_PUBLIC_APP_SUBDOMAIN || "app";
 
 export const config = {
   matcher: [
@@ -12,122 +9,157 @@ export const config = {
      * 1. /api routes
      * 2. /_next (Next.js internals)
      * 3. /_static (inside /public)
-     * 4. /_vercel (Vercel internals)
-     * 5. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
+     * 4. all root files inside /public (e.g. /favicon.ico)
      */
     "/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
   ],
 };
 
-export default async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const hostname = req.headers.get("host") || "";
-  const searchParams = url.searchParams.toString();
-  const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
+  const path = url.pathname;
 
-  // Get the pathname (e.g. /, /about, /blog/first-post)
-  const pathname = url.pathname;
+  // Debug logging
+  console.log("🔍 Middleware Debug:");
+  console.log("  Hostname detected:", hostname);
+  console.log("  Path detected:", path);
 
-  // ADMIN PROTECTION: Protect /admin routes
-  if (pathname.startsWith("/admin")) {
-    const token = await getToken({
-      req: req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+  // Get environment variables
+  const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || "localhost:3000";
+  const protocol = process.env.NEXT_PUBLIC_APP_PROTOCOL || "http";
 
-    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL || "your@email.com";
+  // Remove www. from hostname if present
+  if (hostname.startsWith("www.")) {
+    const newUrl = new URL(req.url);
+    newUrl.hostname = hostname.replace("www.", "");
+    console.log("  ↪️ Redirecting: www -> non-www");
+    return NextResponse.redirect(newUrl, 301);
+  }
 
-    // If not logged in as super admin, return 404 (not 403 for security)
-    if (token?.email !== superAdminEmail) {
-      return NextResponse.rewrite(new URL("/404", req.url));
+  // Extract subdomain
+  const hostnameParts = hostname.split(".");
+  let subdomain = "";
+
+  // Determine subdomain based on environment
+  if (hostname.includes("localhost")) {
+    // Local development: app.localhost:3000 or sub.localhost:3000
+    subdomain = hostnameParts[0];
+  } else {
+    // Production: sub.shaikyakoub.com
+    // If hostname has more than 2 parts (e.g., sub.shaikyakoub.com), extract subdomain
+    if (hostnameParts.length > 2) {
+      subdomain = hostnameParts[0];
     }
   }
 
-  // BAN CHECK: Check if user is banned on protected routes
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/editor")) {
+  console.log("  Subdomain extracted:", subdomain || "(none - root domain)");
+
+  // ============================================
+  // ROUTE 1: Admin Panel (/admin routes)
+  // ============================================
+  if (path.startsWith("/admin")) {
     const token = await getToken({
-      req: req,
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    const superAdminEmail = process.env.SUPER_ADMIN_EMAIL;
+
+    // Check if user is super admin
+    if (token?.email !== superAdminEmail) {
+      console.log("  🚫 Admin access denied - returning 404");
+      // Return 404 instead of 403 for security (hide admin panel existence)
+      return NextResponse.rewrite(new URL("/404", req.url));
+    }
+
+    console.log("  ✅ Admin access granted");
+    return NextResponse.next();
+  }
+
+  // ============================================
+  // ROUTE 2: App Subdomain (app.domain.com)
+  // ============================================
+  if (subdomain === "app") {
+    console.log("  ➡️ Routing to: App subdomain");
+
+    // Check if user is banned
+    const token = await getToken({
+      req,
       secret: process.env.NEXTAUTH_SECRET,
     });
 
     if (token?.bannedAt) {
+      console.log("  🚫 User is banned");
       return NextResponse.redirect(new URL("/banned", req.url));
     }
+
+    // App routes like /dashboard, /editor are already at root level
+    // Just let them through
+    return NextResponse.next();
   }
 
-  // Normalize hostname (remove www, handle ports for local dev)
-  const normalizedHostname = hostname
-    .replace(/^www\./, "")
-    .replace(/:\d+$/, ""); // Remove port for local dev
+  // ============================================
+  // ROUTE 3: Root Domain (Marketing Site)
+  // ============================================
+  const isRootDomain =
+    hostname === appDomain ||
+    hostname === appDomain.replace(":3000", "") ||
+    hostname === `localhost:${new URL(req.url).port}`;
 
-  console.log("🔍 Middleware:", {
-    hostname,
-    normalizedHostname,
-    pathname,
-    appDomain: APP_DOMAIN,
-  });
+  if (isRootDomain && subdomain === "") {
+    console.log("  ➡️ Routing to: Marketing site (root domain)");
 
-  // 1. Handle App Dashboard (app.shaikyakoub.com)
-  if (normalizedHostname === `${APP_SUBDOMAIN}.${APP_DOMAIN}`) {
-    console.log("📱 Routing to: /app");
-    return NextResponse.rewrite(new URL(`/app${path}`, req.url));
-  }
-
-  // 2. Handle Root Marketing Site (shaikyakoub.com)
-  if (normalizedHostname === APP_DOMAIN) {
-    console.log("🏠 Routing to: /home");
-    return NextResponse.rewrite(new URL(`/home${path}`, req.url));
-  }
-
-  // 3. Handle Localhost for Development
-  if (
-    hostname.includes("localhost") ||
-    hostname.includes("127.0.0.1")
-  ) {
-    // Extract subdomain from localhost:3000 format
-    // For local testing: test-site.localhost:3000
-    const parts = hostname.split(".");
-    
-    if (parts.length > 1 && parts[0] !== "localhost") {
-      const subdomain = parts[0];
-      console.log("🧪 Local subdomain routing:", subdomain);
-      
-      // Rewrite to _sites/[site]
-      return NextResponse.rewrite(
-        new URL(`/_sites/${subdomain}${path}`, req.url)
-      );
+    // If path is already in marketing routes, let it through
+    if (
+      path.startsWith("/login") ||
+      path.startsWith("/register") ||
+      path.startsWith("/terms") ||
+      path.startsWith("/privacy") ||
+      path.startsWith("/refund") ||
+      path.startsWith("/templates") ||
+      path.startsWith("/docs") ||
+      path === "/"
+    ) {
+      return NextResponse.next();
     }
 
-    // Default localhost to app dashboard
-    return NextResponse.rewrite(new URL(`/app${path}`, req.url));
+    // Otherwise, let Next.js handle it normally
+    return NextResponse.next();
   }
 
-  // 4. Handle User Sites (Subdomains or Custom Domains)
-  // Examples:
-  // - demo.shaikyakoub.com (subdomain)
-  // - customdomain.com (custom domain)
+  // ============================================
+  // ROUTE 4: Custom Domain
+  // ============================================
+  // If hostname is completely different (not our domain), treat as custom domain
+  if (!hostname.includes(appDomain.split(":")[0]) && !hostname.includes("localhost")) {
+    console.log("  ➡️ Routing to: Custom domain site");
+    console.log("  Rewriting to: /_sites/" + hostname + path);
 
-  // Check if it's a subdomain of your platform
-  const isSubdomain = normalizedHostname.endsWith(`.${APP_DOMAIN}`) &&
-    normalizedHostname !== APP_DOMAIN &&
-    normalizedHostname !== `${APP_SUBDOMAIN}.${APP_DOMAIN}`;
-
-  if (isSubdomain) {
-    // Extract subdomain (e.g., "demo" from "demo.shaikyakoub.com")
-    const subdomain = normalizedHostname.replace(`.${APP_DOMAIN}`, "");
-    console.log("🌐 Subdomain site:", subdomain);
-
-    // Rewrite to _sites/[site]
-    return NextResponse.rewrite(
-      new URL(`/_sites/${subdomain}${path}`, req.url)
-    );
+    // Rewrite to the _sites route with the custom domain
+    const url = new URL(`/_sites/${hostname}${path}`, req.url);
+    return NextResponse.rewrite(url);
   }
 
-  // If we reach here, it's likely a custom domain
-  console.log("🔗 Custom domain:", normalizedHostname);
-  
-  // Rewrite to _sites/[site] using the full domain
-  return NextResponse.rewrite(
-    new URL(`/_sites/${normalizedHostname}${path}`, req.url)
-  );
+  // ============================================
+  // ROUTE 5: User Subdomain (user.domain.com)
+  // ============================================
+  if (subdomain && subdomain !== "app" && subdomain !== "www") {
+    console.log("  ➡️ Routing to: User subdomain site");
+    console.log("  Rewriting to: /_sites/" + subdomain + path);
+
+    // Check if site is banned
+    // Note: We can't easily check this in middleware without DB query
+    // Consider implementing a cache or moving this check to the page level
+
+    // Rewrite to the _sites route with the subdomain
+    const url = new URL(`/_sites/${subdomain}${path}`, req.url);
+    return NextResponse.rewrite(url);
+  }
+
+  // ============================================
+  // Default: Let Next.js handle it
+  // ============================================
+  console.log("  ➡️ Default: No rewrite needed");
+  return NextResponse.next();
 }

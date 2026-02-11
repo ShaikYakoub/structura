@@ -2,9 +2,17 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { auth } from "@/auth";
+import { logActivity } from "@/lib/audit-logger";
 
 export async function publishSite(siteId: string) {
   try {
+    // Get session for audit logging
+    const session = await auth();
+    if (!session?.user?.id) {
+      throw new Error("Unauthorized");
+    }
+
     // Get site info for URL
     const site = await prisma.site.findUnique({
       where: { id: siteId },
@@ -50,6 +58,19 @@ export async function publishSite(siteId: string) {
     // Revalidate all pages for this site
     revalidatePath("/", "layout");
     revalidateTag(`site-${siteId}`);
+
+    // Log activity
+    logActivity({
+      siteId,
+      userId: session.user.id,
+      action: "SITE_PUBLISH",
+      entityId: siteId,
+      entityType: "Site",
+      details: {
+        pageCount: result.count,
+        siteUrl,
+      },
+    });
 
     return { 
       success: true, 

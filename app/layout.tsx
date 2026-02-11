@@ -1,10 +1,81 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
-  title: "Structura - Website Builder",
-  description: "Multi-tenant website builder SaaS",
+  title: {
+    default: "Structura - Build Websites in Minutes",
+    template: "%s | Structura",
+  },
+  description:
+    "The most powerful website builder for startups and creators. Create beautiful, professional websites without code.",
+  keywords: [
+    "website builder",
+    "no-code",
+    "landing page builder",
+    "SaaS builder",
+    "portfolio builder",
+    "business website",
+  ],
+  authors: [{ name: "Structura" }],
+  creator: "Structura",
+  
+  // Icons
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  
+  // Open Graph
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://structura.com",
+    title: "Structura - Build Websites in Minutes",
+    description:
+      "The most powerful website builder for startups and creators. Create beautiful, professional websites without code.",
+    siteName: "Structura",
+    images: [
+      {
+        url: "https://structura.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Structura - Website Builder",
+      },
+    ],
+  },
+  
+  // Twitter Card
+  twitter: {
+    card: "summary_large_image",
+    title: "Structura - Build Websites in Minutes",
+    description:
+      "The most powerful website builder for startups and creators.",
+    images: ["https://structura.com/og-image.jpg"],
+    creator: "@structura",
+  },
+  
+  // Additional
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  
+  verification: {
+    google: "your-google-verification-code",
+    // yandex: "your-yandex-verification-code",
+  },
 };
 
 export default function RootLayout({
@@ -13,10 +84,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
         {children}
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
       </body>
     </html>
   );

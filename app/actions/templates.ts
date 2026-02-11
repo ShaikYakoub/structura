@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/audit-logger";
 
 export type CloneResult = {
   success: boolean;
@@ -170,6 +171,22 @@ export async function createSiteFromTemplate(
     revalidatePath("/onboarding");
 
     console.log("🎉 Template cloned successfully:", newSite.id);
+
+    // Log site creation activity
+    // Note: tenantId is passed as userId since this is during onboarding
+    logActivity({
+      siteId: newSite.id,
+      userId: tenantId,
+      action: "SITE_CREATE",
+      entityId: newSite.id,
+      entityType: "Site",
+      details: {
+        siteName: newName,
+        subdomain: newSubdomain,
+        templateName: template.name,
+        pageCount: template.pages.length || 1,
+      },
+    });
 
     return {
       success: true,

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
+import { auth } from "@/auth";
+import { logActivity } from "@/lib/audit-logger";
 
 const subdomainSchema = z
   .string()
@@ -23,6 +25,31 @@ export async function PATCH(
   { params }: { params: { siteId: string } }
 ) {
   try {
+    // Get session for audit logging
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    // Get current site data for logging
+    const currentSite = await prisma.site.findUnique({
+      where: { id: params.siteId },
+      select: {
+        subdomain: true,
+        customDomain: true,
+      },
+    });
+
+    if (!currentSite) {
+      return NextResponse.json(
+        { error: "Site not found" },
+        { status: 404 }
+      );
+    }
+
     const body = await req.json();
     const { subdomain, customDomain } = body;
 
@@ -83,6 +110,21 @@ export async function PATCH(
         }),
       },
     });
+
+    // Log domain update activity
+    if (customDomain !== undefined && customDomain !== currentSite.customDomain) {
+      logActivity({
+        siteId: params.siteId,
+        userId: session.user.id,
+        action: "DOMAIN_UPDATE",
+        entityId: params.siteId,
+        entityType: "Domain",
+        details: {
+          previousDomain: currentSite.customDomain,
+          newDomain: customDomain || null,
+        },
+      });
+    }
 
     return NextResponse.json(updatedSite);
   } catch (error) {

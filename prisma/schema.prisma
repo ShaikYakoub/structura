@@ -32,6 +32,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   tenant        Tenant?   @relation(fields: [tenantId], references: [id])
+  activityLogs  UserActivityLog[]
 
   @@index([email])
   @@index([razorpayCustomerId])
@@ -120,6 +121,7 @@ model Site {
   description  String?
   pages        Page[]
   analytics    SiteAnalytics[]
+  activityLogs UserActivityLog[]
   tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([subdomain])
@@ -183,5 +185,27 @@ model AuditLog {
   
   @@index([adminEmail])
   @@index([targetId])
+  @@index([createdAt])
+}
+
+model UserActivityLog {
+  id          String   @id @default(cuid())
+  siteId      String   @db.Uuid
+  userId      String   @db.Uuid
+  action      String
+  entityId    String
+  entityType  String
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([siteId])
+  @@index([userId])
+  @@index([action])
+  @@index([entityType])
   @@index([createdAt])
 }
