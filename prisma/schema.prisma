@@ -93,6 +93,13 @@ model Site {
   styles       Json     @default("{\"primary\":\"#000000\",\"background\":\"#ffffff\",\"foreground\":\"#000000\",\"muted\":\"#f1f5f9\",\"mutedForeground\":\"#64748b\",\"fontHeading\":\"Inter\",\"fontBody\":\"Inter\",\"radius\":\"0.5\"}")
   tenantId     String   @db.Uuid
   isPublished  Boolean  @default(false)
+  
+  // Template Fields
+  isTemplate          Boolean  @default(false)
+  templateCategory    String?
+  templateDescription String?
+  thumbnailUrl        String?
+  
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   description  String?
@@ -102,6 +109,8 @@ model Site {
   @@index([subdomain])
   @@index([customDomain])
   @@index([tenantId])
+  @@index([isTemplate])
+  @@index([templateCategory])
 }
 
 model Page {
