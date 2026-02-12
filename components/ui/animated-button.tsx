@@ -4,18 +4,18 @@ import * as React from "react";
 import { motion, useHover } from "framer-motion";
 import { Button, ButtonProps, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
+import { Crown } from "lucide-react";
 
 interface AnimatedButtonProps extends ButtonProps {
   animationType?: "bounce" | "spin" | "none";
-  icon?: LucideIcon;
+  iconName?: string;
   iconPosition?: "left" | "right";
 }
 
 export function AnimatedButton({
   className,
   animationType = "bounce",
-  icon: Icon,
+  iconName,
   iconPosition = "left",
   children,
   asChild,
@@ -30,6 +30,13 @@ export function AnimatedButton({
   const handleHoverEnd = () => setIsHovered(false);
   const handleTapStart = () => setIsTapped(true);
   const handleTapEnd = () => setIsTapped(false);
+
+  // Map icon names to components
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    Crown,
+  };
+
+  const Icon = iconName ? iconMap[iconName] : null;
   if (animationType === "none") {
     return (
       <Button
@@ -61,7 +68,7 @@ export function AnimatedButton({
     hover: {
       y: 0,
       scale: 1.25,
-      x: Icon?.name === "TrendingUp" && iconPosition === "right" ? 4 : 0,
+      x: iconName === "TrendingUp" && iconPosition === "right" ? 4 : 0,
     },
     tap: { y: 0, scale: 0.95, x: 0 },
   };
