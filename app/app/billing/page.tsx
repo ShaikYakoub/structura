@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { AnimatedButton } from "@/components/ui/animated-button";
 
@@ -66,11 +66,8 @@ export default async function BillingPage() {
             className={`relative ${plan.popular ? "border-primary shadow-lg" : ""}`}
           >
             {plan.popular && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-primary text-primary-foreground px-3 py-1">
-                  <Star className="w-3 h-3 mr-1" />
-                  Most Popular
-                </Badge>
+              <div className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10">
+                Most Popular ✨
               </div>
             )}
 
@@ -95,11 +92,11 @@ export default async function BillingPage() {
                 ))}
               </ul>
 
-              <div className="pt-4">
+              <div className="pt-6 px-6">
                 {plan.name === "Free" ? (
                   <AnimatedButton
                     animationType="none"
-                    className="w-full border-2 opacity-50 cursor-not-allowed"
+                    className="w-full border-2 opacity-50 cursor-not-allowed py-3"
                     disabled
                   >
                     {plan.buttonText}
@@ -109,7 +106,7 @@ export default async function BillingPage() {
                     asChild
                     animationType="bounce"
                     iconName={plan.iconName}
-                    className="w-full border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white"
+                    className="w-full border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white py-3"
                     size="lg"
                   >
                     <Link href="/api/billing/create-subscription">
@@ -127,7 +124,7 @@ export default async function BillingPage() {
         <p className="text-sm text-muted-foreground">
           Need help choosing?{" "}
           <Link href="/docs" className="text-primary hover:underline">
-            View our documentation
+            Documentation
           </Link>
         </p>
       </div>
