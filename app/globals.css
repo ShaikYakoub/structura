@@ -135,18 +135,18 @@ button.transition-all:hover {
 }
 
 /* ============================================
-   CUSTOM CURSOR STYLES
+   CUSTOM CURSOR STYLES - COMMENTED OUT
    ============================================ */
 
 /* Hide default cursor on desktop only */
-@media (hover: hover) and (pointer: fine) {
+/* @media (hover: hover) and (pointer: fine) {
   body,
   html {
     cursor: none !important;
   }
 
   /* Hide cursor on all interactive elements */
-  a,
+/*   a,
   a,
   a:hover,
   button,
@@ -164,7 +164,7 @@ button.transition-all:hover {
   }
 
   /* Hide cursor on input fields but keep text cursor */
-  input[type="text"],
+/*   input[type="text"],
   input[type="email"],
   input[type="password"],
   input[type="search"],
@@ -173,10 +173,10 @@ button.transition-all:hover {
   input[type="number"] {
     cursor: text;
   }
-}
+} */
 
 /* Ensure custom cursor has high z-index and doesn't block clicks */
-.custom-cursor {
+/* .custom-cursor {
   pointer-events: none !important;
   z-index: 9999;
-}
+} */

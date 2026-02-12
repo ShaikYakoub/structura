@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { CustomCursor } from "@/components/ui/custom-cursor";
+// import { CustomCursor } from "@/components/ui/custom-cursor";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -89,7 +89,7 @@ export default function RootLayout({
         {children}
         <Toaster position="top-center" />
         {/* Custom Cursor - Only renders on desktop */}
-        <CustomCursor />
+        {/* <CustomCursor /> */}
       </body>
     </html>
   );
