@@ -98,7 +98,7 @@ export default async function BillingPage() {
                 ))}
               </ul>
 
-              <div className="mt-auto pt-6 px-6">
+              <div className="mt-auto pt-6">
                 {plan.name === "Free" ? (
                   <AnimatedButton
                     animationType="none"
