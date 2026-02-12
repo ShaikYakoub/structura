@@ -30,6 +30,7 @@ import {
   ArrowLeft,
   Loader2,
   CheckCircle2,
+  ChevronRight,
 } from "lucide-react";
 
 const CATEGORIES = [
@@ -204,11 +205,22 @@ export default function OnboardingPage() {
                     </motion.div>
                     {index < 3 && (
                       <motion.div
-                        className="mx-4 w-8 h-0.5 bg-muted-foreground/20"
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: isCompleted ? 1 : 0 }}
-                        transition={{ delay: index * 0.1 + 0.3 }}
-                      />
+                        className="mx-2 flex items-center justify-center"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{
+                          opacity: isCompleted ? 1 : 0.3,
+                          scale: isCompleted ? 1 : 0.8
+                        }}
+                        transition={{ delay: index * 0.1 + 0.3, duration: 0.2 }}
+                      >
+                        <ChevronRight
+                          className={`h-5 w-5 ${
+                            isCompleted
+                              ? "text-green-500"
+                              : "text-muted-foreground/40"
+                          }`}
+                        />
+                      </motion.div>
                     )}
                   </div>
                 );
