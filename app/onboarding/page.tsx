@@ -239,7 +239,7 @@ export default function OnboardingPage() {
               className="space-y-8"
             >
               <div className="text-center space-y-4">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold text-primary">
                   What kind of site are you building?
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
