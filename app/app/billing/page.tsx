@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star } from "lucide-react";
+import { Check, Star, Crown } from "lucide-react";
 import Link from "next/link";
 import { AnimatedButton } from "@/components/ui/animated-button";
 
@@ -38,6 +38,7 @@ const plans = [
     ],
     buttonText: "Upgrade to Pro",
     buttonVariant: "default" as const,
+    icon: Crown,
     popular: true,
   },
 ];
@@ -107,7 +108,9 @@ export default async function BillingPage() {
                   <AnimatedButton
                     asChild
                     animationType="bounce"
-                    className="w-full border-2 bg-black hover:bg-gray-900 text-white"
+                    icon={plan.icon}
+                    className="w-full border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white"
+                    size="lg"
                   >
                     <Link href="/api/billing/create-subscription">
                       {plan.buttonText}
