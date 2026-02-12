@@ -123,7 +123,7 @@ export default async function BillingPage() {
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
           Need help choosing?{" "}
-          <Link href="/docs" className="text-primary hover:underline">
+          <Link href="/docs" className="text-primary underline">
             Documentation
           </Link>
         </p>
