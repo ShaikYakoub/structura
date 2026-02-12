@@ -69,7 +69,7 @@ export default async function BillingPage() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`relative mx-auto w-full max-w-sm ${plan.popular ? "border-primary shadow-lg" : ""}`}
+            className={`relative mx-auto w-full max-w-sm h-full flex flex-col ${plan.popular ? "border-primary shadow-lg" : ""}`}
           >
             {plan.popular && (
               <div className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10">
