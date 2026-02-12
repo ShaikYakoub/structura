@@ -142,7 +142,7 @@ export default function OnboardingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 text-white px-6 py-3 rounded-lg shadow-lg">
+          <h1 className="text-5xl font-bold bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
             Create Your Site
           </h1>
           <p className="text-muted-foreground text-xl max-w-2xl mx-auto">
@@ -239,7 +239,7 @@ export default function OnboardingPage() {
               className="space-y-8"
             >
               <div className="text-center space-y-4">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 text-white px-4 py-2 rounded-lg">
+                <h2 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded-lg">
                   What kind of site are you building?
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -303,7 +303,7 @@ export default function OnboardingPage() {
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 text-white px-4 py-2 rounded-lg">
+                  <h2 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded-lg">
                     Choose a Template
                   </h2>
                   <p className="text-muted-foreground">
@@ -340,7 +340,7 @@ export default function OnboardingPage() {
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-primary/80 text-white px-4 py-2 rounded-lg">
+                  <h2 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded-lg">
                     Customize Your Site
                   </h2>
                   <p className="text-muted-foreground">
@@ -500,7 +500,7 @@ export default function OnboardingPage() {
                 transition={{ delay: 0.4 }}
                 className="space-y-4"
               >
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+                <h2 className="text-4xl font-bold bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg">
                   Your Site is Ready! 🎉
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-md mx-auto">
