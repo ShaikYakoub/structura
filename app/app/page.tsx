@@ -12,7 +12,35 @@ import { Button } from "@/components/ui/button";
 
 export default async function AdminDashboard() {
   const session = await auth();
+
+  if (!session?.user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="text-muted-foreground">Please sign in to access your dashboard.</p>
+        </div>
+      </div>
+    );
+  }
+
   const tenantId = (session?.user as any)?.tenantId;
+
+  if (!tenantId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Setup Required</h1>
+          <p className="text-muted-foreground mb-4">
+            Your account needs to be set up. Please complete the onboarding process.
+          </p>
+          <Button asChild>
+            <Link href="/onboarding">Start Setup</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const sites = await prisma.site.findMany({
     where: { tenantId },

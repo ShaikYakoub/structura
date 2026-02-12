@@ -36,12 +36,22 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create tenant first
+    const tenant = await prisma.tenant.create({
+      data: {
+        name: name,
+        email: email,
+        slug: email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + Date.now(), // Generate unique slug
+      },
+    });
+
+    // Create user with tenant
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
+        tenantId: tenant.id,
       },
     });
 

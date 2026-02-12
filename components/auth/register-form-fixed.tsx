@@ -79,7 +79,7 @@ export function RegisterForm() {
         );
         router.push("/login");
       } else {
-        router.push("/dashboard");
+        router.push("/app");
       }
     } catch (error: any) {
       toast.error(error.message || "Something went wrong");
