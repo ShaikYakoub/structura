@@ -73,7 +73,7 @@ export default async function BillingPage() {
             className={`relative mx-auto w-full max-w-sm h-full flex flex-col ${plan.popular ? "border-primary shadow-lg" : ""}`}
           >
             {plan.popular && (
-              <AnimatedBadge className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10">
+              <AnimatedBadge className="absolute -top-5 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10">
                 Most Popular ✨
               </AnimatedBadge>
             )}
