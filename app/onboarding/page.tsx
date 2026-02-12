@@ -162,12 +162,10 @@ export default function OnboardingPage() {
               ].map((stepInfo, index) => {
                 const Icon = stepInfo.icon;
                 const isActive = currentStep === stepInfo.step;
-                const isCompleted = [
-                  "category",
-                  "template",
-                  "customize",
-                  "success",
-                ].indexOf(currentStep) > index;
+                const isCompleted =
+                  ["category", "template", "customize", "success"].indexOf(
+                    currentStep,
+                  ) > index;
 
                 return (
                   <div key={stepInfo.step} className="flex items-center">
@@ -176,8 +174,8 @@ export default function OnboardingPage() {
                         isCompleted
                           ? "bg-green-500 border-green-500 text-white"
                           : isActive
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "bg-muted border-muted-foreground/20 text-muted-foreground"
+                            ? "bg-primary border-primary text-primary-foreground"
+                            : "bg-muted border-muted-foreground/20 text-muted-foreground"
                       }`}
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -196,8 +194,8 @@ export default function OnboardingPage() {
                           isActive
                             ? "text-primary"
                             : isCompleted
-                            ? "text-green-600 dark:text-green-400"
-                            : "text-muted-foreground"
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-muted-foreground"
                         }`}
                       >
                         {stepInfo.label}
@@ -209,7 +207,7 @@ export default function OnboardingPage() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{
                           opacity: isCompleted ? 1 : 0.3,
-                          scale: isCompleted ? 1 : 0.8
+                          scale: isCompleted ? 1 : 0.8,
                         }}
                         transition={{ delay: index * 0.1 + 0.3, duration: 0.2 }}
                       >
@@ -245,7 +243,8 @@ export default function OnboardingPage() {
                   What kind of site are you building?
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  Choose a category that best describes your project. We'll show you templates tailored to your needs.
+                  Choose a category that best describes your project. We'll show
+                  you templates tailored to your needs.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -261,18 +260,18 @@ export default function OnboardingPage() {
                       whileTap={{ scale: 0.98 }}
                     >
                       <Card
-                        className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:border-primary/50 bg-card group"
+                        className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:border-primary/50 bg-card group h-full"
                         onClick={() => handleCategorySelect(category.id)}
                       >
-                        <CardHeader className="pb-4">
-                          <div className="flex items-center gap-4">
+                        <CardHeader className="pb-4 flex flex-col h-full">
+                          <div className="flex items-center gap-4 flex-grow">
                             <motion.div
                               className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300"
                               whileHover={{ rotate: 5 }}
                             >
                               <Icon className="h-7 w-7 text-primary" />
                             </motion.div>
-                            <div>
+                            <div className="flex-grow">
                               <CardTitle className="text-xl group-hover:text-primary transition-colors">
                                 {category.name}
                               </CardTitle>
@@ -397,7 +396,10 @@ export default function OnboardingPage() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 }}
                     >
-                      <Label htmlFor="subdomain" className="text-sm font-medium">
+                      <Label
+                        htmlFor="subdomain"
+                        className="text-sm font-medium"
+                      >
                         Subdomain
                       </Label>
                       <div className="flex gap-2">
@@ -502,7 +504,8 @@ export default function OnboardingPage() {
                   Your Site is Ready! 🎉
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                  Your site has been created successfully. Start editing to make it your own.
+                  Your site has been created successfully. Start editing to make
+                  it your own.
                 </p>
               </motion.div>
 
