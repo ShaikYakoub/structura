@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -134,246 +135,431 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 p-4">
       <div className="container mx-auto max-w-6xl py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Create Your Site</h1>
-          <p className="text-muted-foreground">
+        <motion.div
+          className="mb-12 text-center space-y-4"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
+            Create Your Site
+          </h1>
+          <p className="text-muted-foreground text-xl max-w-2xl mx-auto">
             Follow these simple steps to launch your website in minutes
           </p>
-        </div>
+        </motion.div>
 
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <Progress value={progress} className="h-2" />
-          <div className="flex justify-between mt-2 text-sm text-muted-foreground">
-            <span
-              className={
-                currentStep === "category" ? "text-primary font-medium" : ""
-              }
-            >
-              Choose Category
-            </span>
-            <span
-              className={
-                currentStep === "template" ? "text-primary font-medium" : ""
-              }
-            >
-              Pick Template
-            </span>
-            <span
-              className={
-                currentStep === "customize" ? "text-primary font-medium" : ""
-              }
-            >
-              Customize
-            </span>
-            <span
-              className={
-                currentStep === "success" ? "text-primary font-medium" : ""
-              }
-            >
-              Done
-            </span>
-          </div>
-        </div>
+        {/* Animated Step Indicators */}
+        <div className="mb-12">
+          <div className="flex justify-center">
+            <div className="flex items-center space-x-4">
+              {[
+                { step: "category", label: "Choose Category", icon: Briefcase },
+                { step: "template", label: "Pick Template", icon: FileText },
+                { step: "customize", label: "Customize", icon: User },
+                { step: "success", label: "Done", icon: CheckCircle2 },
+              ].map((stepInfo, index) => {
+                const Icon = stepInfo.icon;
+                const isActive = currentStep === stepInfo.step;
+                const isCompleted = [
+                  "category",
+                  "template",
+                  "customize",
+                  "success",
+                ].indexOf(currentStep) > index;
 
-        {/* Step: Category Selection */}
-        {currentStep === "category" && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">
-              What kind of site are you building?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {CATEGORIES.map((category) => {
-                const Icon = category.icon;
                 return (
-                  <Card
-                    key={category.id}
-                    className="cursor-pointer hover:shadow-lg transition-shadow hover:border-primary bg-card"
-                    onClick={() => handleCategorySelect(category.id)}
-                  >
-                    <CardHeader>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <CardTitle>{category.name}</CardTitle>
-                      </div>
-                      <CardDescription>{category.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
+                  <div key={stepInfo.step} className="flex items-center">
+                    <motion.div
+                      className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors ${
+                        isCompleted
+                          ? "bg-green-500 border-green-500 text-white"
+                          : isActive
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "bg-muted border-muted-foreground/20 text-muted-foreground"
+                      }`}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </motion.div>
+                    <motion.div
+                      className="ml-3 hidden sm:block"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 + 0.2 }}
+                    >
+                      <p
+                        className={`text-sm font-medium ${
+                          isActive
+                            ? "text-primary"
+                            : isCompleted
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {stepInfo.label}
+                      </p>
+                    </motion.div>
+                    {index < 3 && (
+                      <motion.div
+                        className="mx-4 w-8 h-0.5 bg-muted-foreground/20"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: isCompleted ? 1 : 0 }}
+                        transition={{ delay: index * 0.1 + 0.3 }}
+                      />
+                    )}
+                  </div>
                 );
               })}
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Step: Category Selection */}
+        <AnimatePresence mode="wait">
+          {currentStep === "category" && (
+            <motion.div
+              key="category"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8"
+            >
+              <div className="text-center space-y-4">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  What kind of site are you building?
+                </h2>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  Choose a category that best describes your project. We'll show you templates tailored to your needs.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {CATEGORIES.map((category, index) => {
+                  const Icon = category.icon;
+                  return (
+                    <motion.div
+                      key={category.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Card
+                        className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:border-primary/50 bg-card group"
+                        onClick={() => handleCategorySelect(category.id)}
+                      >
+                        <CardHeader className="pb-4">
+                          <div className="flex items-center gap-4">
+                            <motion.div
+                              className="p-3 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/20 group-hover:to-primary/10 transition-all duration-300"
+                              whileHover={{ rotate: 5 }}
+                            >
+                              <Icon className="h-7 w-7 text-primary" />
+                            </motion.div>
+                            <div>
+                              <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                                {category.name}
+                              </CardTitle>
+                              <CardDescription className="text-base">
+                                {category.description}
+                              </CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Step: Template Selection */}
-        {currentStep === "template" && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Choose a Template</h2>
-              <Button
-                variant="ghost"
-                onClick={() => setCurrentStep("category")}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-            </div>
-            <TemplatePicker
-              onSelectTemplate={handleTemplateSelect}
-              selectedCategory={selectedCategory}
-            />
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {currentStep === "template" && (
+            <motion.div
+              key="template"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8"
+            >
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    Choose a Template
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Pick a design that matches your vision
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  onClick={() => setCurrentStep("category")}
+                  className="hover:bg-primary/10"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+              </div>
+              <TemplatePicker
+                onSelectTemplate={handleTemplateSelect}
+                selectedCategory={selectedCategory}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Step: Customize */}
-        {currentStep === "customize" && selectedTemplate && (
-          <div className="max-w-2xl mx-auto space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Customize Your Site</h2>
-              <Button
-                variant="ghost"
-                onClick={() => setCurrentStep("template")}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-            </div>
-
-            <Card className="bg-card">
-              <CardHeader>
-                <CardTitle>Site Details</CardTitle>
-                <CardDescription>
-                  Give your site a name and choose a subdomain
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Site Name */}
+        <AnimatePresence mode="wait">
+          {currentStep === "customize" && selectedTemplate && (
+            <motion.div
+              key="customize"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="max-w-2xl mx-auto space-y-8"
+            >
+              <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <Label htmlFor="siteName">Site Name</Label>
-                  <Input
-                    id="siteName"
-                    value={siteName}
-                    onChange={(e) => setSiteName(e.target.value)}
-                    placeholder="My Awesome Site"
-                  />
-                </div>
-
-                {/* Subdomain */}
-                <div className="space-y-2">
-                  <Label htmlFor="subdomain">Subdomain</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="subdomain"
-                      value={subdomain}
-                      onChange={(e) =>
-                        setSubdomain(
-                          e.target.value
-                            .toLowerCase()
-                            .replace(/[^a-z0-9-]/g, ""),
-                        )
-                      }
-                      placeholder="my-site"
-                      className="font-mono"
-                    />
-                    <span className="flex items-center text-sm text-muted-foreground whitespace-nowrap">
-                      .localhost:3000
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Only lowercase letters, numbers, and hyphens
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    Customize Your Site
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Give your site a name and choose a unique subdomain
                   </p>
                 </div>
-
-                {/* Selected Template Info */}
-                <div className="p-4 rounded-lg bg-muted">
-                  <p className="text-sm font-medium mb-1">Selected Template</p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedTemplate.name}
-                  </p>
-                </div>
-
-                {/* Create Button */}
                 <Button
-                  className="w-full"
-                  size="lg"
-                  onClick={handleCreateSite}
-                  disabled={isCreating || !siteName || !subdomain}
+                  variant="ghost"
+                  onClick={() => setCurrentStep("template")}
+                  className="hover:bg-primary/10"
                 >
-                  {isCreating ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Your Site...
-                    </>
-                  ) : (
-                    <>
-                      Create Site
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card className="bg-card shadow-xl border-0 bg-gradient-to-br from-card to-card/50">
+                  <CardHeader className="pb-6">
+                    <CardTitle className="text-2xl">Site Details</CardTitle>
+                    <CardDescription className="text-base">
+                      Give your site a name and choose a subdomain
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Site Name */}
+                    <motion.div
+                      className="space-y-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <Label htmlFor="siteName" className="text-sm font-medium">
+                        Site Name
+                      </Label>
+                      <Input
+                        id="siteName"
+                        value={siteName}
+                        onChange={(e) => setSiteName(e.target.value)}
+                        placeholder="My Awesome Site"
+                        className="h-12 text-base"
+                      />
+                    </motion.div>
+
+                    {/* Subdomain */}
+                    <motion.div
+                      className="space-y-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <Label htmlFor="subdomain" className="text-sm font-medium">
+                        Subdomain
+                      </Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="subdomain"
+                          value={subdomain}
+                          onChange={(e) =>
+                            setSubdomain(
+                              e.target.value
+                                .toLowerCase()
+                                .replace(/[^a-z0-9-]/g, ""),
+                            )
+                          }
+                          placeholder="my-site"
+                          className="font-mono h-12 text-base"
+                        />
+                        <span className="flex items-center text-sm text-muted-foreground whitespace-nowrap bg-muted px-3 rounded-md border">
+                          .localhost:3000
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Only lowercase letters, numbers, and hyphens
+                      </p>
+                    </motion.div>
+
+                    {/* Selected Template Info */}
+                    <motion.div
+                      className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <p className="text-sm font-medium mb-2 text-primary">
+                        Selected Template
+                      </p>
+                      <p className="text-base font-semibold">
+                        {selectedTemplate.name}
+                      </p>
+                    </motion.div>
+
+                    {/* Create Button */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      <Button
+                        className="w-full h-12 text-base font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300"
+                        size="lg"
+                        onClick={handleCreateSite}
+                        disabled={isCreating || !siteName || !subdomain}
+                      >
+                        {isCreating ? (
+                          <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Creating Your Site...
+                          </>
+                        ) : (
+                          <>
+                            Create Site
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Step: Success */}
-        {currentStep === "success" && (
-          <div className="max-w-2xl mx-auto text-center space-y-6">
-            <div className="flex justify-center">
-              <div className="p-4 rounded-full bg-green-100 dark:bg-green-900">
-                <CheckCircle2 className="h-16 w-16 text-green-600 dark:text-green-400" />
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-3xl font-bold mb-2">
-                Your Site is Ready! 🎉
-              </h2>
-              <p className="text-muted-foreground">
-                Your site has been created successfully. Start editing to make
-                it your own.
-              </p>
-            </div>
-
-            <Card className="bg-card">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium mb-1">Site Name</p>
-                    <p className="text-sm text-muted-foreground">{siteName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium mb-1">Your URL</p>
-                    <a
-                      href={`http://${subdomain}.localhost:3000`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline"
-                    >
-                      {subdomain}.localhost:3000
-                    </a>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => router.push("/app")}
+        <AnimatePresence mode="wait">
+          {currentStep === "success" && (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
+              className="max-w-2xl mx-auto text-center space-y-8"
+            >
+              <motion.div
+                className="flex justify-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", bounce: 0.5 }}
               >
-                Go to Dashboard
-              </Button>
-              <Button className="flex-1" onClick={handleGoToEditor}>
-                Start Editing
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+                <div className="p-6 rounded-full bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900 dark:to-green-800 shadow-lg">
+                  <CheckCircle2 className="h-20 w-20 text-green-600 dark:text-green-400" />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-4"
+              >
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
+                  Your Site is Ready! 🎉
+                </h2>
+                <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                  Your site has been created successfully. Start editing to make it your own.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <Card className="bg-card shadow-xl border-0 bg-gradient-to-br from-card to-card/50">
+                  <CardContent className="pt-8 pb-8">
+                    <div className="space-y-6">
+                      <motion.div
+                        className="space-y-2"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.7 }}
+                      >
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                          Site Name
+                        </p>
+                        <p className="text-xl font-semibold">{siteName}</p>
+                      </motion.div>
+                      <motion.div
+                        className="space-y-2"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.8 }}
+                      >
+                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                          Your URL
+                        </p>
+                        <a
+                          href={`http://${subdomain}.localhost:3000`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xl text-primary hover:text-primary/80 font-mono hover:underline transition-colors"
+                        >
+                          {subdomain}.localhost:3000
+                        </a>
+                      </motion.div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div
+                className="flex gap-4 pt-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9 }}
+              >
+                <Button
+                  variant="outline"
+                  className="flex-1 h-12 text-base font-medium hover:bg-primary/5 transition-all duration-300"
+                  onClick={() => router.push("/app")}
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
+                  className="flex-1 h-12 text-base font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={handleGoToEditor}
+                >
+                  Start Editing
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
