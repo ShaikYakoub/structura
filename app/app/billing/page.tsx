@@ -1,0 +1,124 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Check, Star } from "lucide-react";
+import Link from "next/link";
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    period: "forever",
+    description: "Perfect for getting started",
+    features: [
+      "Up to 3 sites",
+      "Basic templates",
+      "Community support",
+      "Structura branding",
+    ],
+    buttonText: "Current Plan",
+    buttonVariant: "outline" as const,
+    popular: false,
+  },
+  {
+    name: "Pro",
+    price: "$29",
+    period: "per month",
+    description: "For growing businesses and creators",
+    features: [
+      "Unlimited sites",
+      "Premium templates",
+      "Custom domain support",
+      "Priority support",
+      "Remove Structura branding",
+      "Advanced analytics",
+    ],
+    buttonText: "Upgrade to Pro",
+    buttonVariant: "default" as const,
+    popular: true,
+  },
+];
+
+export default async function BillingPage() {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    redirect("/login");
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold">Choose Your Plan</h1>
+        <p className="text-muted-foreground mt-2">
+          Upgrade to Pro to unlock unlimited sites and premium features
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        {plans.map((plan) => (
+          <Card
+            key={plan.name}
+            className={`relative ${plan.popular ? "border-primary shadow-lg" : ""}`}
+          >
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground px-3 py-1">
+                  <Star className="w-3 h-3 mr-1" />
+                  Most Popular
+                </Badge>
+              </div>
+            )}
+
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">{plan.name}</CardTitle>
+              <div className="mt-4">
+                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className="text-muted-foreground">/{plan.period}</span>
+              </div>
+              <CardDescription className="mt-2">
+                {plan.description}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <ul className="space-y-2">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-center">
+                    <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="pt-4">
+                {plan.name === "Free" ? (
+                  <Button variant={plan.buttonVariant} className="w-full" disabled>
+                    {plan.buttonText}
+                  </Button>
+                ) : (
+                  <Button asChild variant={plan.buttonVariant} className="w-full">
+                    <Link href="/api/billing/create-subscription">
+                      {plan.buttonText}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="text-center">
+        <p className="text-sm text-muted-foreground">
+          Need help choosing?{" "}
+          <Link href="/docs" className="text-primary hover:underline">
+            View our documentation
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
