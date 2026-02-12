@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Star } from "lucide-react";
 import Link from "next/link";
+import { AnimatedButton } from "@/components/ui/animated-button";
 
 const plans = [
   {
@@ -95,15 +96,23 @@ export default async function BillingPage() {
 
               <div className="pt-4">
                 {plan.name === "Free" ? (
-                  <Button variant={plan.buttonVariant} className="w-full" disabled>
+                  <AnimatedButton
+                    animationType="none"
+                    className="w-full border-2 opacity-50 cursor-not-allowed"
+                    disabled
+                  >
                     {plan.buttonText}
-                  </Button>
+                  </AnimatedButton>
                 ) : (
-                  <Button asChild variant={plan.buttonVariant} className="w-full">
+                  <AnimatedButton
+                    asChild
+                    animationType="bounce"
+                    className="w-full border-2 bg-black hover:bg-gray-900 text-white"
+                  >
                     <Link href="/api/billing/create-subscription">
                       {plan.buttonText}
                     </Link>
-                  </Button>
+                  </AnimatedButton>
                 )}
               </div>
             </CardContent>
