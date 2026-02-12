@@ -124,7 +124,7 @@ export default async function BillingPage() {
         <p className="text-sm text-muted-foreground">
           Need help choosing?{" "}
           <Link href="/docs" className="text-primary underline">
-            Documentation
+            Visit our Documentation
           </Link>
         </p>
       </div>
