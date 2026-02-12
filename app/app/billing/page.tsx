@@ -82,8 +82,8 @@ export default async function BillingPage() {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-4">
-              <ul className="space-y-2">
+            <CardContent className="flex flex-col h-full">
+              <ul className="space-y-2 mb-6">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-center">
                     <Check className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
@@ -92,7 +92,7 @@ export default async function BillingPage() {
                 ))}
               </ul>
 
-              <div className="pt-6 px-6">
+              <div className="mt-auto pt-6 px-6">
                 {plan.name === "Free" ? (
                   <AnimatedButton
                     animationType="none"
