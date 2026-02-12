@@ -104,19 +104,6 @@ export default async function SettingsPage() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Note about Admin */}
-      <Card className="border-primary/20 bg-primary/5">
-        <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground">
-            💡 <strong>Note:</strong> This is your user settings page. If you're
-            the platform owner, access the Super Admin dashboard at{" "}
-            <Link href="/admin" className="text-primary hover:underline">
-              /admin
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
     </div>
   );
 }
