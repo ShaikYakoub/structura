@@ -188,7 +188,7 @@ export default function OnboardingPage() {
                 return (
                   <Card
                     key={category.id}
-                    className="cursor-pointer hover:shadow-lg transition-shadow hover:border-primary"
+                    className="cursor-pointer hover:shadow-lg transition-shadow hover:border-primary bg-card"
                     onClick={() => handleCategorySelect(category.id)}
                   >
                     <CardHeader>
@@ -241,7 +241,7 @@ export default function OnboardingPage() {
               </Button>
             </div>
 
-            <Card>
+            <Card className="bg-card">
               <CardHeader>
                 <CardTitle>Site Details</CardTitle>
                 <CardDescription>
@@ -337,7 +337,7 @@ export default function OnboardingPage() {
               </p>
             </div>
 
-            <Card>
+            <Card className="bg-card">
               <CardContent className="pt-6">
                 <div className="space-y-4">
                   <div>
