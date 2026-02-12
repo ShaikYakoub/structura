@@ -3,7 +3,15 @@
 import { motion } from "framer-motion";
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowRightFromLine,
+  ArrowRightToLine,
+  ArrowBigRight,
+  TrendingUp,
+  Play,
+  Layout,
+} from "lucide-react";
 import Link from "next/link";
 
 export function Hero() {
@@ -66,22 +74,21 @@ export function Hero() {
                 size="lg"
                 variant="outline"
                 animationType="bounce"
+                icon={Layout}
                 className="text-base border-2"
                 onClick={() => scrollToSection("showcase")}
               >
-                <Play className="mr-2 h-5 w-5" />
                 View Templates
               </AnimatedButton>
               <AnimatedButton
                 size="lg"
                 asChild
                 animationType="bounce"
+                icon={TrendingUp}
+                iconPosition="right"
                 className="text-base border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white"
               >
-                <Link href="/register">
-                  Start Building for Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+                <Link href="/register">Start Building for Free</Link>
               </AnimatedButton>
             </motion.div>
 

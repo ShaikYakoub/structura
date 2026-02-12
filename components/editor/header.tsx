@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Circle, Loader2, Eye, Rocket } from "lucide-react";
-import { publishSite, saveDraft, hasUnpublishedChanges } from "@/app/actions/publish";
+import {
+  publishSite,
+  saveDraft,
+  hasUnpublishedChanges,
+} from "@/app/actions/publish";
 
 interface Page {
   id: string;
@@ -116,7 +120,7 @@ export function EditorHeader({
               View live site →
             </a>
           </div>,
-          { duration: 5000 }
+          { duration: 5000 },
         );
 
         setSaveStatus("saved");
@@ -183,7 +187,10 @@ export function EditorHeader({
 
         {/* Changes Not Live Badge */}
         {hasChanges && (
-          <Badge variant="outline" className="gap-1.5 border-yellow-400 bg-yellow-50 text-yellow-700">
+          <Badge
+            variant="outline"
+            className="gap-1.5 border-yellow-400 bg-yellow-50 text-yellow-700"
+          >
             <Circle className="h-2 w-2 fill-yellow-600" />
             Changes not live
           </Badge>

@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, Crown } from "lucide-react";
 import Link from "next/link";
 
 const plans = [
@@ -125,6 +125,7 @@ export function Pricing() {
                   <AnimatedButton
                     asChild
                     animationType="bounce"
+                    icon={Crown}
                     className={`w-full border-2 ${plan.popular ? "bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white" : ""}`}
                     size="lg"
                     variant={plan.popular ? "secondary" : "outline"}

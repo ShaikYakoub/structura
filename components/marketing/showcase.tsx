@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Plus, Layout } from "lucide-react";
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -88,7 +88,7 @@ export function Showcase() {
                             className="border-2"
                           >
                             View Template
-                            <ArrowRight className="ml-2 h-4 w-4" />
+                            <ArrowRight className="h-4 w-4" />
                           </AnimatedButton>
                         </motion.div>
                       </div>
@@ -114,12 +114,10 @@ export function Showcase() {
             variant="outline"
             asChild
             animationType="bounce"
+            icon={Layout}
             className="border-2"
           >
-            <Link href="#showcase">
-              View All Templates
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+            <Link href="#showcase">View All Templates</Link>
           </AnimatedButton>
         </div>
       </div>

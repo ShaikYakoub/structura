@@ -143,7 +143,7 @@ export function TemplatePicker({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Eye className="mr-2 h-4 w-4" />
+                      <Eye className="h-4 w-4" />
                       Preview
                     </a>
                   </Button>

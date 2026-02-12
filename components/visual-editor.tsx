@@ -37,7 +37,9 @@ interface Section {
 export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   const [currentPage, setCurrentPage] = useState<Page | null>(initialPage);
   const [sections, setSections] = useState<Section[]>([]);
-  const [selectedSectionId, setSelectedSectionId] = useState<string | undefined>();
+  const [selectedSectionId, setSelectedSectionId] = useState<
+    string | undefined
+  >();
   const [saving, setSaving] = useState(false);
   const [deviceMode, setDeviceMode] = useState<DeviceMode>("desktop");
   const [showLayersSidebar, setShowLayersSidebar] = useState(false);
@@ -48,16 +50,18 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   // Load sections when page changes
   useEffect(() => {
     if (currentPage) {
-      const content = currentPage.draftContent as { sections: Section[] } | null;
+      const content = currentPage.draftContent as {
+        sections: Section[];
+      } | null;
       const loadedSections = content?.sections || [];
-      
+
       // Ensure all sections have IDs
-      const sectionsWithIds = loadedSections.map(section => ({
+      const sectionsWithIds = loadedSections.map((section) => ({
         ...section,
         id: section.id || nanoid(),
         visible: section.visible !== false,
       }));
-      
+
       setSections(sectionsWithIds);
       setSelectedSectionId(undefined);
     }
@@ -70,10 +74,10 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   }, [isMobileDevice, deviceMode]);
 
   const handleSectionUpdate = (id: string, updatedData: any) => {
-    setSections(prevSections =>
-      prevSections.map(section =>
-        section.id === id ? { ...section, data: updatedData } : section
-      )
+    setSections((prevSections) =>
+      prevSections.map((section) =>
+        section.id === id ? { ...section, data: updatedData } : section,
+      ),
     );
   };
 
@@ -85,12 +89,14 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
       data: defaultData,
       visible: true,
     };
-    setSections(prevSections => [...prevSections, newSection]);
+    setSections((prevSections) => [...prevSections, newSection]);
     setSelectedSectionId(newSection.id);
   };
 
   const handleDeleteSection = (id: string) => {
-    setSections(prevSections => prevSections.filter(section => section.id !== id));
+    setSections((prevSections) =>
+      prevSections.filter((section) => section.id !== id),
+    );
     if (selectedSectionId === id) {
       setSelectedSectionId(undefined);
     }
@@ -99,7 +105,7 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
 
   const handleReorder = async (reorderedSections: Section[]) => {
     setSections(reorderedSections);
-    
+
     // Auto-save to draft
     if (currentPage) {
       await saveDraft(currentPage.id, { sections: reorderedSections });
@@ -109,11 +115,14 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
 
   const handleMoveSection = (sectionId: string, direction: "up" | "down") => {
     setSections((prevSections) => {
-      const index = prevSections.findIndex((section) => section.id === sectionId);
+      const index = prevSections.findIndex(
+        (section) => section.id === sectionId,
+      );
       if (index === -1) return prevSections;
 
       if (direction === "up" && index === 0) return prevSections;
-      if (direction === "down" && index === prevSections.length - 1) return prevSections;
+      if (direction === "down" && index === prevSections.length - 1)
+        return prevSections;
 
       const newSections = [...prevSections];
       const targetIndex = direction === "up" ? index - 1 : index + 1;
@@ -133,12 +142,12 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
   };
 
   const handleToggleVisibility = (id: string) => {
-    setSections(prevSections =>
-      prevSections.map(section =>
+    setSections((prevSections) =>
+      prevSections.map((section) =>
         section.id === id
           ? { ...section, visible: section.visible !== false ? false : true }
-          : section
-      )
+          : section,
+      ),
     );
   };
 
@@ -163,7 +172,7 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
     setCurrentPage(page);
   };
 
-  const selectedSection = sections.find(s => s.id === selectedSectionId);
+  const selectedSection = sections.find((s) => s.id === selectedSectionId);
   const handleSelectedSectionUpdate = (data: any) => {
     if (!selectedSection) return;
     handleSectionUpdate(selectedSection.id, data);
@@ -257,7 +266,9 @@ export function VisualEditor({ site, initialPage }: VisualEditorProps) {
                       onMoveUp={() => handleMoveSection(section.id, "up")}
                       onMoveDown={() => handleMoveSection(section.id, "down")}
                       onDelete={() => handleDeleteSection(section.id)}
-                      onToggleVisibility={() => handleToggleVisibility(section.id)}
+                      onToggleVisibility={() =>
+                        handleToggleVisibility(section.id)
+                      }
                       isMobile={isMobileDevice}
                       isFirst={index === 0}
                       isLast={index === sections.length - 1}

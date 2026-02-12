@@ -65,7 +65,7 @@ export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("category");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
-    null
+    null,
   );
   const [siteName, setSiteName] = useState("");
   const [subdomain, setSubdomain] = useState("");
@@ -112,7 +112,7 @@ export default function OnboardingPage() {
       selectedTemplate.id,
       tenantId,
       siteName,
-      subdomain
+      subdomain,
     );
 
     if (result.success && result.siteId) {
@@ -271,7 +271,7 @@ export default function OnboardingPage() {
                         setSubdomain(
                           e.target.value
                             .toLowerCase()
-                            .replace(/[^a-z0-9-]/g, "")
+                            .replace(/[^a-z0-9-]/g, ""),
                         )
                       }
                       placeholder="my-site"
