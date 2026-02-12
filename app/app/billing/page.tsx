@@ -109,7 +109,7 @@ export default async function BillingPage() {
                     className="w-full border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white py-3"
                     size="lg"
                   >
-                    <Link href="/api/billing/create-subscription">
+                    <Link href="/api/billing/create-subscription" className="w-full">
                       {plan.buttonText}
                     </Link>
                   </AnimatedButton>
