@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   Card,
   CardContent,
@@ -72,9 +73,19 @@ export default async function BillingPage() {
             className={`relative mx-auto w-full max-w-sm h-full flex flex-col ${plan.popular ? "border-primary shadow-lg" : ""}`}
           >
             {plan.popular && (
-              <div className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10">
+              <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10"
+              >
                 Most Popular ✨
-              </div>
+              </motion.div>
             )}
 
             <CardHeader className="text-center">
