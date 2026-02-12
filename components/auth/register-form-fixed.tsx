@@ -188,7 +188,7 @@ export function RegisterForm() {
             <AnimatedButton
               type="submit"
               animationType="none"
-              className="w-full border-2"
+              className="w-full border-2 bg-black hover:bg-gray-900 text-white"
               disabled={isLoading}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

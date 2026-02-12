@@ -85,7 +85,7 @@ export function LoginForm() {
           <AnimatedButton
             type="submit"
             animationType="none"
-            className="w-full border-2"
+            className="w-full border-2 bg-black hover:bg-gray-900 text-white"
             disabled={loading}
           >
             {loading ? "Signing in..." : "Sign In"}

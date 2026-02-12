@@ -58,7 +58,11 @@ export function AnimatedButton({
 
   const iconBounceVariants = {
     idle: { y: 0, scale: 1, x: 0 },
-    hover: { y: 0, scale: 1.1, x: 4 },
+    hover: {
+      y: 0,
+      scale: 1.25,
+      x: Icon?.name === "TrendingUp" && iconPosition === "right" ? 4 : 0,
+    },
     tap: { y: 0, scale: 0.95, x: 0 },
   };
 

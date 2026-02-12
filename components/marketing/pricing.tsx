@@ -87,9 +87,9 @@ export function Pricing() {
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-50"
+                  className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10"
                 >
-                  MOST POPULAR ✨
+                  Most Popular ✨
                 </motion.div>
               )}
               <Card
@@ -125,7 +125,7 @@ export function Pricing() {
                   <AnimatedButton
                     asChild
                     animationType="bounce"
-                    icon={Crown}
+                    icon={plan.popular ? Crown : undefined}
                     className={`w-full border-2 ${plan.popular ? "bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white" : ""}`}
                     size="lg"
                     variant={plan.popular ? "secondary" : "outline"}
