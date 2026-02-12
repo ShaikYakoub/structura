@@ -149,7 +149,10 @@ export function AnimatedButton({
                 damping: 17,
               }
         }
-        className={cn("inline-block", className?.includes("w-full") && "w-full")}
+        className={cn(
+          "inline-block",
+          className?.includes("w-full") && "w-full",
+        )}
       >
         {enhancedChild}
       </motion.div>

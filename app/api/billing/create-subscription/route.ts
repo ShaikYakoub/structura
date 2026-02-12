@@ -14,10 +14,7 @@ export async function GET() {
     const session = await auth();
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get user data
@@ -26,17 +23,14 @@ export async function GET() {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Check if user is already Pro
     if (user.isPro) {
       return NextResponse.json(
         { error: "User is already on Pro plan" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,12 +61,11 @@ export async function GET() {
       razorpayKey: process.env.RAZORPAY_KEY_ID,
       amount: subscription.customer_notify,
     });
-
   } catch (error) {
     console.error("Subscription creation error:", error);
     return NextResponse.json(
       { error: "Failed to create subscription" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,6 +1,12 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
@@ -63,7 +69,7 @@ export default async function BillingPage() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`relative ${plan.popular ? "border-primary shadow-lg" : ""}`}
+            className={`relative mx-auto w-full max-w-sm ${plan.popular ? "border-primary shadow-lg" : ""}`}
           >
             {plan.popular && (
               <div className="absolute -top-6 -right-6 bg-white/20 backdrop-blur-lg border border-white/30 text-primary px-3 py-1.5 rounded-full text-xs font-medium shadow-xl z-10">
@@ -109,7 +115,10 @@ export default async function BillingPage() {
                     className="w-full border-2 bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white py-3"
                     size="lg"
                   >
-                    <Link href="/api/billing/create-subscription" className="w-full">
+                    <Link
+                      href="/api/billing/create-subscription"
+                      className="w-full"
+                    >
                       {plan.buttonText}
                     </Link>
                   </AnimatedButton>

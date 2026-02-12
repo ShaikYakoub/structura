@@ -41,7 +41,11 @@ export async function POST(req: NextRequest) {
       data: {
         name: name,
         email: email,
-        slug: email.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "") + Date.now(), // Generate unique slug
+        slug:
+          email
+            .split("@")[0]
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "") + Date.now(), // Generate unique slug
       },
     });
 
