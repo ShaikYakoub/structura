@@ -370,16 +370,17 @@ export function TemplateManager({
                   className="border rounded-lg p-4 space-y-3 hover:border-primary/50 transition-colors"
                 >
                   {/* Thumbnail */}
-                  {template.thumbnailUrl && isValidUrl(template.thumbnailUrl) && (
-                    <div className="relative aspect-video rounded-md overflow-hidden">
-                      <Image
-                        src={template.thumbnailUrl}
-                        alt={template.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  )}
+                  {template.thumbnailUrl &&
+                    isValidUrl(template.thumbnailUrl) && (
+                      <div className="relative aspect-video rounded-md overflow-hidden">
+                        <Image
+                          src={template.thumbnailUrl}
+                          alt={template.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
 
                   {/* Template Info */}
                   <div>
