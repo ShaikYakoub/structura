@@ -135,7 +135,10 @@ export async function middleware(req: NextRequest) {
   // ROUTE 4: Custom Domain
   // ============================================
   // If hostname is completely different (not our domain), treat as custom domain
-  if (!hostname.includes(appDomain.split(":")[0]) && !hostname.includes("localhost")) {
+  if (
+    !hostname.includes(appDomain.split(":")[0]) &&
+    !hostname.includes("localhost")
+  ) {
     console.log("  ➡️ Routing to: Custom domain site");
     console.log("  Rewriting to: /_sites/" + hostname + path);
 

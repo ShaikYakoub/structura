@@ -10,7 +10,7 @@ import {
   Shield,
   Database,
   AlertTriangle,
-  Save
+  Save,
 } from "lucide-react";
 
 export default function AdminSettingsPage() {
@@ -40,7 +40,11 @@ export default function AdminSettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="support-email">Support Email</Label>
-                <Input id="support-email" type="email" defaultValue="support@structura.com" />
+                <Input
+                  id="support-email"
+                  type="email"
+                  defaultValue="support@structura.com"
+                />
               </div>
             </div>
 
@@ -180,12 +184,8 @@ export default function AdminSettingsPage() {
                 <Database className="mr-2 h-4 w-4" />
                 Backup Database
               </Button>
-              <Button variant="outline">
-                Export Data
-              </Button>
-              <Button variant="destructive">
-                Clear Cache
-              </Button>
+              <Button variant="outline">Export Data</Button>
+              <Button variant="destructive">Clear Cache</Button>
             </div>
           </CardContent>
         </Card>
