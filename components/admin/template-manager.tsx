@@ -65,7 +65,10 @@ interface TemplateManagerProps {
   currentTemplates: Template[];
 }
 
-export function TemplateManager({ sites, currentTemplates }: TemplateManagerProps) {
+export function TemplateManager({
+  sites,
+  currentTemplates,
+}: TemplateManagerProps) {
   const [selectedSiteId, setSelectedSiteId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -76,11 +79,21 @@ export function TemplateManager({ sites, currentTemplates }: TemplateManagerProp
     thumbnailUrl: "",
   });
 
+  // Helper function to validate URLs
+  const isValidUrl = (string: string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   // Filter sites based on search
   const filteredSites = sites.filter(
     (site) =>
       site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      site.subdomain.toLowerCase().includes(searchQuery.toLowerCase())
+      site.subdomain.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Handle site selection
@@ -288,7 +301,7 @@ export function TemplateManager({ sites, currentTemplates }: TemplateManagerProp
             {/* Thumbnail URL */}
             <div className="space-y-2">
               <Label htmlFor="thumbnail">Thumbnail URL</Label>
-              {formData.thumbnailUrl ? (
+              {formData.thumbnailUrl && isValidUrl(formData.thumbnailUrl) ? (
                 <div className="relative aspect-video rounded-lg overflow-hidden border">
                   <Image
                     src={formData.thumbnailUrl}
@@ -357,7 +370,7 @@ export function TemplateManager({ sites, currentTemplates }: TemplateManagerProp
                   className="border rounded-lg p-4 space-y-3 hover:border-primary/50 transition-colors"
                 >
                   {/* Thumbnail */}
-                  {template.thumbnailUrl && (
+                  {template.thumbnailUrl && isValidUrl(template.thumbnailUrl) && (
                     <div className="relative aspect-video rounded-md overflow-hidden">
                       <Image
                         src={template.thumbnailUrl}

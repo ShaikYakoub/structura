@@ -37,7 +37,7 @@ export default async function TemplatesPage() {
   });
 
   // Format sites for the component (rename tenant to user for compatibility)
-  const formattedSites = sites.map(site => ({
+  const formattedSites = sites.map((site) => ({
     ...site,
     user: {
       name: site.tenant.name,
@@ -65,7 +65,7 @@ export default async function TemplatesPage() {
   });
 
   // Format templates for the component
-  const formattedTemplates = currentTemplates.map(template => ({
+  const formattedTemplates = currentTemplates.map((template) => ({
     id: template.id,
     name: template.name,
     description: template.templateDescription || "",
@@ -88,7 +88,10 @@ export default async function TemplatesPage() {
         </p>
       </div>
 
-      <TemplateManager sites={formattedSites} currentTemplates={formattedTemplates} />
+      <TemplateManager
+        sites={formattedSites}
+        currentTemplates={formattedTemplates}
+      />
     </div>
   );
 }

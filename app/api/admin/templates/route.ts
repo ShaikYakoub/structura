@@ -7,7 +7,10 @@ export async function POST(req: NextRequest) {
     // Check if user is super admin
     const admin = await isAdmin();
     if (!admin) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
     }
 
     const body = await req.json();
@@ -30,14 +33,14 @@ export async function POST(req: NextRequest) {
     if (!site) {
       return NextResponse.json(
         { success: false, error: "Site not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (site.pages.length === 0) {
       return NextResponse.json(
         { success: false, error: "Site has no published pages" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,7 +60,7 @@ export async function POST(req: NextRequest) {
     console.error("Error creating template:", error);
     return NextResponse.json(
       { success: false, error: "Failed to create template" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

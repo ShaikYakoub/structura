@@ -71,7 +71,9 @@ export function AdminSidebar() {
             </div>
             <div>
               <span className="text-lg font-bold">Structura</span>
-              <span className="block text-xs text-muted-foreground">Admin Panel</span>
+              <span className="block text-xs text-muted-foreground">
+                Admin Panel
+              </span>
             </div>
           </Link>
         </div>
@@ -90,7 +92,7 @@ export function AdminSidebar() {
                   "group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                   isActive
                     ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 <Icon
@@ -98,7 +100,7 @@ export function AdminSidebar() {
                     "mr-3 h-5 w-5 flex-shrink-0",
                     isActive
                       ? "text-primary-foreground"
-                      : "text-muted-foreground group-hover:text-foreground"
+                      : "text-muted-foreground group-hover:text-foreground",
                   )}
                 />
                 {item.name}

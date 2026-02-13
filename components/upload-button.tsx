@@ -10,7 +10,10 @@ interface UploadButtonProps {
   className?: string;
 }
 
-export function UploadButton({ onUploadComplete, className }: UploadButtonProps) {
+export function UploadButton({
+  onUploadComplete,
+  className,
+}: UploadButtonProps) {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

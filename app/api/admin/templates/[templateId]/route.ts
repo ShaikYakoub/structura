@@ -4,13 +4,16 @@ import { isAdmin } from "@/lib/admin-auth";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ templateId: string }> }
+  { params }: { params: Promise<{ templateId: string }> },
 ) {
   try {
     // Check if user is super admin
     const admin = await isAdmin();
     if (!admin) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
     }
 
     const { templateId } = await params;
@@ -23,7 +26,7 @@ export async function DELETE(
     if (!site) {
       return NextResponse.json(
         { success: false, error: "Template not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -42,7 +45,7 @@ export async function DELETE(
     console.error("Error deleting template:", error);
     return NextResponse.json(
       { success: false, error: "Failed to delete template" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
