@@ -49,6 +49,7 @@ npm run dev
 ## Database Schema
 
 **Multi-Tenant Architecture:**
+
 - `Tenant` → Client/Organization
 - `Site` → Website (belongs to Tenant)
 - `Page` → Content (belongs to Site)
@@ -78,6 +79,41 @@ DATABASE_URL="postgresql://structura:structura_dev_password@localhost:5432/struc
 NODE_ENV="development"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
+
+## AI-Powered Site Generation
+
+Structura includes an AI-powered site generator using **Google Gemini 2.0 Flash**. Users can describe their business in natural language, and the AI will generate a complete landing page with professional copy, appropriate components, and optimized structure.
+
+### Setup
+
+1. Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Add to your `.env` file:
+
+```env
+GOOGLE_GENERATIVE_AI_API_KEY=your-google-ai-api-key
+```
+
+### Features
+
+- **Natural Language Input**: Describe your business in plain English
+- **Intelligent Component Selection**: AI chooses optimal components (hero, features, pricing, etc.)
+- **Professional Copy**: Generates compelling headlines, descriptions, and CTAs
+- **Structured Outputs**: Uses Zod schemas for type-safe, validated content
+- **Zero-Downtime Generation**: Creates temporary tenants and sites, handles collisions automatically
+
+### Usage
+
+1. Click "Create with AI" on the dashboard
+2. Describe your business (e.g., "A luxury pet hotel in Dubai with grooming services")
+3. AI generates a complete site in seconds
+4. Edit and customize in the visual editor
+
+### Example Prompts
+
+- "A modern yoga studio offering online and in-person classes"
+- "An organic coffee roastery that ships worldwide"
+- "A mobile app development agency for startups"
+- "A sustainable fashion brand selling handmade clothing"
 
 ## Project Structure
 

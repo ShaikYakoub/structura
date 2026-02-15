@@ -34,17 +34,34 @@ export async function GET() {
       );
     }
 
-    // Create Razorpay subscription
-    const subscription = await razorpay.subscriptions.create({
-      plan_id: process.env.RAZORPAY_PRO_PLAN_ID!, // You'll need to create this plan in Razorpay dashboard
-      customer_notify: 1,
-      total_count: 12, // 12 months
-      customer: {
+    // Create or get Razorpay customer
+    const customers = await (razorpay.customers.all as any)({
+      email: user.email,
+    });
+    let customerId: string;
+
+    if (customers.items && customers.items.length > 0) {
+      customerId = customers.items[0].id;
+    } else {
+      const newCustomer = await razorpay.customers.create({
         name: user.name || "User",
         email: user.email,
         contact: "", // You might want to collect phone number
-      },
-    });
+      });
+      customerId = newCustomer.id;
+    }
+
+    // Create Razorpay subscription
+    const subscriptionData = {
+      plan_id: process.env.RAZORPAY_PRO_PLAN_ID!, // You'll need to create this plan in Razorpay dashboard
+      customer_id: customerId,
+      customer_notify: 1 as any,
+      total_count: 12, // 12 months
+    };
+
+    const subscription = await (razorpay.subscriptions.create as any)(
+      subscriptionData,
+    );
 
     // Store subscription details in database
     await prisma.user.update({

@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { motion, useHover } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button, ButtonProps, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Crown } from "lucide-react";
 
 interface AnimatedButtonProps extends ButtonProps {
   animationType?: "bounce" | "spin" | "none";
+  icon?: React.ComponentType<any>;
   iconName?: string;
   iconPosition?: "left" | "right";
 }
@@ -15,6 +16,7 @@ interface AnimatedButtonProps extends ButtonProps {
 export function AnimatedButton({
   className,
   animationType = "bounce",
+  icon,
   iconName,
   iconPosition = "left",
   children,
@@ -36,7 +38,7 @@ export function AnimatedButton({
     Crown,
   };
 
-  const Icon = iconName ? iconMap[iconName] : null;
+  const Icon = icon || (iconName ? iconMap[iconName] : null);
   if (animationType === "none") {
     return (
       <Button
@@ -136,7 +138,7 @@ export function AnimatedButton({
         onHoverStart={handleHoverStart}
         onHoverEnd={handleHoverEnd}
         onTapStart={handleTapStart}
-        onTapEnd={handleTapEnd}
+        onTap={handleTapEnd}
         transition={
           animationType === "spin"
             ? {
@@ -196,7 +198,7 @@ export function AnimatedButton({
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
       onTapStart={handleTapStart}
-      onTapEnd={handleTapEnd}
+      onTap={handleTapEnd}
       transition={
         animationType === "spin"
           ? {

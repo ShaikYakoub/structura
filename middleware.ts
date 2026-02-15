@@ -97,7 +97,7 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/banned", req.url));
     }
 
-    // App routes like /dashboard, /editor are already at root level
+    // App routes like /app, /editor are already at root level
     // Just let them through
     return NextResponse.next();
   }

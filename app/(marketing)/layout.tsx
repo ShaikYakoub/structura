@@ -10,6 +10,8 @@ export default function MarketingLayout({
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <Navbar />
+      {/* Spacer for fixed navbar */}
+      <div className="h-16" aria-hidden="true" />
       <main>{children}</main>
       <Footer />
       <SupportBubble />

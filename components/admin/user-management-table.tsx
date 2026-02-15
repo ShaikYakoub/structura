@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -21,9 +21,27 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import { UserCog, Ban, CheckCircle, AlertTriangle } from "lucide-react";
-import { banUser, unbanUser, createImpersonationSession } from "@/app/actions/admin";
+import {
+  UserCog,
+  Ban,
+  CheckCircle,
+  AlertTriangle,
+  Search,
+  ArrowUpDown,
+} from "lucide-react";
+import {
+  banUser,
+  unbanUser,
+  createImpersonationSession,
+} from "@/app/actions/admin";
 
 interface User {
   id: string;
@@ -43,11 +61,52 @@ export function UserManagementTable({ users }: { users: User[] }) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [banReason, setBanReason] = useState("");
 
+  // New state for search, filters, and sorting
+  const [searchQuery, setSearchQuery] = useState("");
+  const [planFilter, setPlanFilter] = useState<"all" | "pro" | "free">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "banned">(
+    "all",
+  );
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+
+  // Filter and sort users
+  const filteredAndSortedUsers = useMemo(() => {
+    let filtered = users.filter((user) => {
+      // Search filter
+      const matchesSearch =
+        (user.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Plan filter
+      const matchesPlan =
+        planFilter === "all" ||
+        (planFilter === "pro" && user.isPro) ||
+        (planFilter === "free" && !user.isPro);
+
+      // Status filter
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "active" && !user.bannedAt) ||
+        (statusFilter === "banned" && user.bannedAt);
+
+      return matchesSearch && matchesPlan && matchesStatus;
+    });
+
+    // Sort by creation date
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+    });
+
+    return filtered;
+  }, [users, searchQuery, planFilter, statusFilter, sortOrder]);
+
   const handleBan = async () => {
     if (!selectedUser) return;
 
     const result = await banUser(selectedUser.id, banReason);
-    
+
     if (result.success) {
       toast.success(result.message);
       setShowBanDialog(false);
@@ -64,7 +123,7 @@ export function UserManagementTable({ users }: { users: User[] }) {
 
   const handleImpersonate = async (userId: string) => {
     const result = await createImpersonationSession(userId);
-    
+
     if (result.success) {
       toast.success("Impersonation logged. Opening dashboard...");
       // In production, implement proper session switching
@@ -76,82 +135,166 @@ export function UserManagementTable({ users }: { users: User[] }) {
 
   return (
     <>
-      <div className="border rounded-lg">
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-2">
+          <Select
+            value={planFilter}
+            onValueChange={(value: "all" | "pro" | "free") =>
+              setPlanFilter(value)
+            }
+          >
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Plan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Plans</SelectItem>
+              <SelectItem value="pro">Pro</SelectItem>
+              <SelectItem value="free">Free</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={statusFilter}
+            onValueChange={(value: "all" | "active" | "banned") =>
+              setStatusFilter(value)
+            }
+          >
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="banned">Banned</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={sortOrder}
+            onValueChange={(value: "newest" | "oldest") => setSortOrder(value)}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Sort by date" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="h-4 w-4" />
+                  Newest First
+                </div>
+              </SelectItem>
+              <SelectItem value="oldest">
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="h-4 w-4" />
+                  Oldest First
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="border rounded-lg w-full">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Plan</TableHead>
-              <TableHead>Sites</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="text-center">User & Email</TableHead>
+              <TableHead className="text-center">Plan</TableHead>
+              <TableHead className="text-center">Sites</TableHead>
+              <TableHead className="text-center">Joined</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
-                  <div>
-                    <p className="font-medium">{user.name || "Anonymous"}</p>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {user.isPro ? (
-                    <Badge>Pro</Badge>
-                  ) : (
-                    <Badge variant="secondary">Free</Badge>
-                  )}
-                </TableCell>
-                <TableCell>{user._count.sites}</TableCell>
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {user.bannedAt ? (
-                    <Badge variant="destructive">Banned</Badge>
-                  ) : (
-                    <Badge variant="outline">Active</Badge>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleImpersonate(user.id)}
-                      disabled={!!user.bannedAt}
-                    >
-                      <UserCog className="h-4 w-4 mr-1" />
-                      Impersonate
-                    </Button>
-                    {user.bannedAt ? (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleUnban(user.id)}
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Unban
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setShowBanDialog(true);
-                        }}
-                      >
-                        <Ban className="h-4 w-4 mr-1" />
-                        Ban
-                      </Button>
-                    )}
-                  </div>
+            {filteredAndSortedUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8">
+                  <p className="text-muted-foreground">No users found</p>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              filteredAndSortedUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="text-center">
+                    <div>
+                      <p className="font-medium">{user.name || "Anonymous"}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {user.isPro ? (
+                      <Badge>Pro</Badge>
+                    ) : (
+                      <Badge variant="secondary">Free</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {user._count.sites}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {user.bannedAt ? (
+                      <Badge variant="destructive">Banned</Badge>
+                    ) : (
+                      <Badge variant="outline">Active</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex gap-2 justify-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleImpersonate(user.id)}
+                        disabled={!!user.bannedAt}
+                      >
+                        <UserCog className="h-4 w-4 mr-1" />
+                        Impersonate
+                      </Button>
+                      {user.bannedAt ? (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleUnban(user.id)}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Unban
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedUser(user);
+                            setShowBanDialog(true);
+                          }}
+                        >
+                          <Ban className="h-4 w-4 mr-1" />
+                          Ban
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

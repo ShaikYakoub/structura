@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/admin-auth";
-import { AdminSidebar } from "@/components/admin/sidebar";
-import { AdminHeader } from "@/components/admin/header";
+import { AdminNavbar } from "@/components/admin/navbar";
 
 export default async function AdminLayout({
   children,
@@ -16,15 +15,12 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <AdminSidebar />
-      <div className="lg:pl-64">
-        <AdminHeader />
-        <main className="py-6">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {children}
-          </div>
-        </main>
-      </div>
+      <AdminNavbar />
+      {/* Spacer for fixed navbar */}
+      <div className="h-16" aria-hidden="true" />
+      <main className="py-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
+      </main>
     </div>
   );
 }

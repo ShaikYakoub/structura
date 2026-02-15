@@ -57,12 +57,17 @@ export default async function SitePage(props: SitePageProps) {
   const params = await props.params;
   const { domain, slug } = params;
 
+  console.log(`SitePage: domain=${domain}, slug=${slug}`);
+
   // Find the site
   const site = await prisma.site.findUnique({
     where: { subdomain: domain },
   });
 
+  console.log(`Site found:`, !!site, site?.name);
+
   if (!site) {
+    console.log(`Site not found for domain: ${domain}`);
     notFound();
   }
 
@@ -77,7 +82,10 @@ export default async function SitePage(props: SitePageProps) {
     },
   });
 
+  console.log(`Page found:`, !!page, page?.path, !!page?.publishedContent);
+
   if (!page) {
+    console.log(`Page not found for path: ${pagePath}`);
     notFound();
   }
 
@@ -87,15 +95,17 @@ export default async function SitePage(props: SitePageProps) {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900">Coming Soon</h1>
-          <p className="mt-2 text-gray-600">This page has not been published yet.</p>
+          <p className="mt-2 text-gray-600">
+            This page has not been published yet.
+          </p>
         </div>
       </div>
     );
   }
 
   // Parse publishedContent JSON
-  const content = page.publishedContent as { sections: any[] } | null;
-  const sections = content?.sections || [];
+  const content = page.publishedContent as any[] | null;
+  const sections = content || [];
 
   return <Renderer sections={sections} />;
 }

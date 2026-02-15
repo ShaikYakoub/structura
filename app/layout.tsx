@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { Providers } from "@/components/providers";
 // import { CustomCursor } from "@/components/ui/custom-cursor";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -86,7 +87,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
       <body className={`${inter.className} overflow-x-hidden`}>
-        {children}
+        <Providers>{children}</Providers>
         <Toaster position="top-center" />
         {/* Custom Cursor - Only renders on desktop */}
         {/* <CustomCursor /> */}

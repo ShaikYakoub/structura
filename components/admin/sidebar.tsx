@@ -5,13 +5,11 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  Users,
   Globe,
-  Settings,
   LayoutTemplate,
   ShieldAlert,
   BarChart3,
-  Package,
+  CreditCard,
 } from "lucide-react";
 
 const navigation = [
@@ -19,11 +17,6 @@ const navigation = [
     name: "Dashboard",
     href: "/admin",
     icon: LayoutDashboard,
-  },
-  {
-    name: "Users",
-    href: "/admin/users",
-    icon: Users,
   },
   {
     name: "Sites",
@@ -36,24 +29,9 @@ const navigation = [
     icon: LayoutTemplate,
   },
   {
-    name: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-  },
-  {
     name: "Billing",
     href: "/admin/billing",
-    icon: Package,
-  },
-  {
-    name: "Security",
-    href: "/admin/security",
-    icon: ShieldAlert,
-  },
-  {
-    name: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
+    icon: CreditCard,
   },
 ];
 
@@ -112,7 +90,7 @@ export function AdminSidebar() {
         {/* Footer */}
         <div className="flex-shrink-0 px-4 pt-4 border-t">
           <Link
-            href="/dashboard"
+            href="/app"
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <LayoutDashboard className="h-4 w-4" />

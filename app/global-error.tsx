@@ -1,6 +1,7 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
+// Temporarily disable Sentry to fix OpenTelemetry vendor chunk error
+// import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -12,8 +13,9 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log error to Sentry
-    Sentry.captureException(error);
+    // Temporarily disable Sentry error logging
+    // Sentry.captureException(error);
+    console.error("Global error:", error);
   }, [error]);
 
   return (
