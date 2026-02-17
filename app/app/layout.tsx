@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { SupportBubble } from "@/components/marketing/support-bubble";
+import { ImpersonationBanner } from "@/components/impersonation-banner";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -19,7 +20,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     // Check if user is banned
-    if (session.user?.bannedAt) {
+    if ((session.user as any)?.bannedAt) {
       router.push("/banned");
       return;
     }
@@ -44,7 +45,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Navbar />
       {/* Spacer for fixed navbar */}
       <div className="h-16" aria-hidden="true" />
-      <main className="p-8 mx-auto">{children}</main>
+      <div className="p-8 mx-auto max-w-7xl">
+        <ImpersonationBanner />
+        <main>{children}</main>
+      </div>
       <SupportBubble />
     </div>
   );

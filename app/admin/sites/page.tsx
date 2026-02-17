@@ -54,22 +54,42 @@ export default async function AdminSitesPage() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-blue-700 mb-4">
-            If you need assistance with site management or have questions about the platform.
+            If you need assistance with site management or have questions about
+            the platform.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              asChild
+            >
               <a href="mailto:support@structura.com">
                 <Mail className="mr-2 h-4 w-4" />
                 Email Support
               </a>
             </Button>
-            <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100" asChild>
-              <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              asChild
+            >
+              <a
+                href="https://wa.me/1234567890"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <MessageCircle className="mr-2 h-4 w-4" />
                 WhatsApp
               </a>
             </Button>
-            <Button variant="outline" size="sm" className="border-blue-300 text-blue-700 hover:bg-blue-100" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              asChild
+            >
               <a href="tel:+1234567890">
                 <Phone className="mr-2 h-4 w-4" />
                 Call Support

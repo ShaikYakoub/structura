@@ -122,14 +122,39 @@ export function UserManagementTable({ users }: { users: User[] }) {
   };
 
   const handleImpersonate = async (userId: string) => {
-    const result = await createImpersonationSession(userId);
+    try {
+      console.log("🎭 Initiating impersonation for user:", userId);
 
-    if (result.success) {
-      toast.success("Impersonation logged. Opening dashboard...");
-      // In production, implement proper session switching
-      console.log("🔒 Impersonation session created for user:", userId);
-    } else {
-      toast.error(result.message);
+      // Step 1: Generate Golden Ticket
+      const result = await createImpersonationSession(userId);
+
+      if (!result.success || !result.token) {
+        toast.error(result.message || "Failed to generate impersonation token");
+        return;
+      }
+
+      console.log("✅ Golden Ticket received");
+
+      // Step 2: Sign in using the impersonation provider
+      const { signIn } = await import("next-auth/react");
+      const signInResult = await signIn("impersonation", {
+        token: result.token,
+        callbackUrl: "/app",
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        toast.error("Failed to impersonate user");
+        console.error("❌ Sign in error:", signInResult.error);
+      } else if (signInResult?.ok) {
+        toast.success(`Now logged in as ${result.targetUserName}`);
+
+        // Redirect to user dashboard
+        window.location.href = "/app";
+      }
+    } catch (error) {
+      console.error("❌ Impersonation error:", error);
+      toast.error("Something went wrong during impersonation");
     }
   };
 

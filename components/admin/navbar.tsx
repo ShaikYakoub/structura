@@ -51,7 +51,7 @@ export function AdminNavbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
           <div className="flex items-center">
@@ -133,7 +133,7 @@ export function AdminNavbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center px-3 rounded-md transition-colors ${
+                  className={`flex items-center rounded-md transition-colors ${
                     isActive
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -146,7 +146,7 @@ export function AdminNavbar() {
             })}
             <Link
               href="/app"
-              className="flex items-center px-3 rounded-md transition-colors text-muted-foreground hover:text-foreground"
+              className="flex items-center rounded-md transition-colors text-muted-foreground hover:text-foreground"
               onClick={() => setIsOpen(false)}
             >
               <span>User Dashboard</span>
@@ -158,7 +158,7 @@ export function AdminNavbar() {
                   signOut({ callbackUrl: "/login" });
                   setIsOpen(false);
                 }}
-                className="flex items-center gap-3 px-3 rounded-md transition-colors text-muted-foreground hover:text-foreground justify-start"
+                className="flex items-center gap-3 rounded-md transition-colors text-muted-foreground hover:text-foreground justify-start"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Sign Out</span>

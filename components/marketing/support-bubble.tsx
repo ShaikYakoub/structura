@@ -28,10 +28,12 @@ export function SupportBubble() {
     <>
       {/* Support Card (appears when open) */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-4 w-80 shadow-2xl z-[100] animate-in slide-in-from-bottom-4 bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl">
+        <Card className="fixed bottom-24 right-4 w-80 z-[100] animate-in slide-in-from-bottom-4 bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg text-white">How can we help?</CardTitle>
+              <CardTitle className="text-lg text-white">
+                How can we help?
+              </CardTitle>
               <Button
                 variant="ghost"
                 size="icon"
@@ -110,7 +112,7 @@ export function SupportBubble() {
       {/* Floating Button */}
       <Button
         size="lg"
-        className="fixed bottom-4 right-4 h-14 w-14 rounded-full shadow-lg z-[100] hover:scale-110 transition-transform bg-white/10 backdrop-blur-xl border border-white/30 text-white hover:bg-white/20 shadow-2xl"
+        className="fixed bottom-4 right-4 h-14 w-14 rounded-full z-[100] hover:scale-110 transition-transform bg-white/10 backdrop-blur-xl border border-white/30 text-white hover:bg-white/20 shadow-2xl"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? (

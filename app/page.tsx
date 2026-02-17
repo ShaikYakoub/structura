@@ -6,12 +6,14 @@ import { CTA } from "@/components/marketing/cta";
 import { Navbar } from "@/components/marketing/navbar";
 import { Footer } from "@/components/marketing/footer";
 import { SupportBubble } from "@/components/marketing/support-bubble";
-import { IntroAnimation } from "@/components/ui/intro-animation";
+// import { IntroAnimation } from "@/components/ui/intro-animation";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <IntroAnimation />
+    <div
+      className="min-h-screen bg-background overflow-x-hidden"
+      style={{ scrollBehavior: "smooth" }}
+    >
       <Navbar />
       {/* Spacer for fixed navbar */}
       <div className="h-16" aria-hidden="true" />

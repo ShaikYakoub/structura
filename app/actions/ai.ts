@@ -688,6 +688,14 @@ export async function generateSiteFromPrompt(userPrompt: string) {
     console.log("5. Final subdomain:", finalSubdomain);
     console.log("5. Component blocks to save:", blocks.length);
 
+    if (!user.tenantId) {
+      console.log("❌ User has no tenantId");
+      return {
+        success: false,
+        message: "User account is not properly configured",
+      };
+    }
+
     try {
       const site = await prisma.site.create({
         data: {

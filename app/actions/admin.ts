@@ -3,6 +3,16 @@
 import prisma from "@/lib/prisma";
 import { requireAdmin, getSuperAdminEmail } from "@/lib/admin-auth";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import jwt from "jsonwebtoken";
+
+interface ImpersonationPayload {
+  email: string;
+  type: "impersonation";
+  adminEmail: string;
+  iat: number;
+  exp: number;
+}
 
 /**
  * Log admin action for audit trail
@@ -11,7 +21,7 @@ async function logAdminAction(
   action: string,
   targetId: string,
   targetType: "user" | "site",
-  metadata?: any
+  metadata?: any,
 ) {
   await prisma.auditLog.create({
     data: {
@@ -23,7 +33,9 @@ async function logAdminAction(
     },
   });
 
-  console.log(`🔒 ADMIN ACTION: ${action} on ${targetType} ${targetId} by ${getSuperAdminEmail()}`);
+  console.log(
+    `🔒 ADMIN ACTION: ${action} on ${targetType} ${targetId} by ${getSuperAdminEmail()}`,
+  );
 }
 
 /**
@@ -31,7 +43,7 @@ async function logAdminAction(
  */
 export async function banUser(
   userId: string,
-  reason: string
+  reason: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
     await requireAdmin();
@@ -64,7 +76,7 @@ export async function banUser(
  * Unban a user
  */
 export async function unbanUser(
-  userId: string
+  userId: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
     await requireAdmin();
@@ -96,25 +108,83 @@ export async function unbanUser(
 /**
  * Create impersonation session (returns special token)
  */
-export async function createImpersonationSession(
-  userId: string
-): Promise<{ success: boolean; redirectUrl?: string; message: string }> {
+export async function createImpersonationSession(userId: string): Promise<{
+  success: boolean;
+  token?: string;
+  targetUserName?: string;
+  message: string;
+}> {
   try {
-    await requireAdmin();
+    const session = await auth();
 
-    // Log impersonation
-    await logAdminAction("impersonate_user", userId, "user");
+    // Verify Super Admin
+    if (session?.user?.email !== process.env.SUPER_ADMIN_EMAIL) {
+      console.error("❌ Unauthorized impersonation attempt");
+      return {
+        success: false,
+        message: "Unauthorized: Super Admin access required",
+      };
+    }
 
-    // In a real implementation, you'd create a special session token
-    // For now, we'll just log it and redirect
-    // You can implement this with NextAuth callbacks
+    // Fetch target user
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        bannedAt: true,
+      },
+    });
+
+    if (!targetUser) {
+      return { success: false, message: "User not found" };
+    }
+
+    // Prevent impersonating banned users
+    if (targetUser.bannedAt) {
+      return { success: false, message: "Cannot impersonate banned users" };
+    }
+
+    // Prevent admin from impersonating themselves
+    if (!session?.user?.email || targetUser.email === session.user.email) {
+      return {
+        success: false,
+        message: "Cannot impersonate yourself",
+      };
+    }
+
+    // Generate Golden Ticket JWT
+    const token = jwt.sign(
+      {
+        email: targetUser.email,
+        type: "impersonation",
+        adminEmail: session?.user?.email || "unknown",
+      },
+      process.env.NEXTAUTH_SECRET!,
+      {
+        expiresIn: "60s", // Token valid for 60 seconds only
+      },
+    );
+
+    console.log("🎫 Golden Ticket generated for:", targetUser.email);
+
+    // Log the impersonation attempt
+    await logAdminAction("impersonate_user", userId, "user", {
+      adminEmail: session?.user?.email || "unknown",
+      targetUserEmail: targetUser.email,
+      targetUserName: targetUser.name,
+      timestamp: new Date().toISOString(),
+    });
 
     return {
       success: true,
-      redirectUrl: `/admin/impersonate/${userId}`,
-      message: "Impersonation session created",
+      token,
+      targetUserName: targetUser.name || targetUser.email,
+      message: "Impersonation token generated",
     };
   } catch (error) {
+    console.error("❌ Error generating impersonation token:", error);
     return {
       success: false,
       message: "Failed to create impersonation session",
@@ -127,7 +197,7 @@ export async function createImpersonationSession(
  */
 export async function takedownSite(
   siteId: string,
-  reason: string
+  reason: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
     await requireAdmin();
@@ -161,7 +231,7 @@ export async function takedownSite(
  * Restore a banned site
  */
 export async function restoreSite(
-  siteId: string
+  siteId: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
     await requireAdmin();

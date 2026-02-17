@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { AnimatedButton } from "@/components/ui/animated-button";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { LogOut, Menu, X, ArrowLeft } from "lucide-react";
+import { Menu, X, ArrowLeft, User } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
@@ -40,7 +41,7 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
           <div className="flex items-center">
@@ -71,6 +72,22 @@ export function Navbar() {
             </Link>
 
             <Link
+              href="/templates"
+              className={`relative flex items-center rounded-md transition-colors group text-sm font-medium ${
+                isActive("/templates")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <span className="relative">
+                Browse Templates
+                <span
+                  className={`absolute -bottom-1 left-0 h-0.5 bg-black transition-all duration-300 ease-out ${isActive("/templates") ? "w-full" : "w-0 group-hover:w-full"}`}
+                ></span>
+              </span>
+            </Link>
+
+            <Link
               href="/app/settings"
               className={`relative flex items-center rounded-md transition-colors group text-sm font-medium ${
                 isActive("/app/settings")
@@ -78,37 +95,29 @@ export function Navbar() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <span className="relative">
-                Settings
-                <span
-                  className={`absolute -bottom-1 left-0 h-0.5 bg-black transition-all duration-300 ease-out ${isActive("/app/settings") ? "w-full" : "w-0 group-hover:w-full"}`}
-                ></span>
-              </span>
+              <div className="relative">
+                <Avatar className="h-6 w-6 ring-2 ring-gray-400 ring-offset-2">
+                  <AvatarImage
+                    src={session?.user?.image || undefined}
+                    alt="Profile"
+                  />
+                  <AvatarFallback className="h-6 w-6">
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <span className="sr-only">Settings</span>
             </Link>
 
             {isSuperAdmin && (
-              <Link
-                href="/admin"
-                className="relative flex items-center gap-3 rounded-md transition-colors text-muted-foreground hover:text-foreground group text-sm font-medium"
+              <Button
+                variant="ghost"
+                onClick={() => router.push("/admin")}
+                className="bg-black text-white hover:bg-gray-800 rounded-md transition-colors text-sm font-medium py-2"
               >
-                <ArrowLeft size={20} />
-                <span className="relative">
-                  Back to Admin
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-black group-hover:w-full transition-all duration-300 ease-out"></span>
-                </span>
-              </Link>
+                Super Admin Panel
+              </Button>
             )}
-
-            <AnimatedButton
-              asChild
-              animationType="none"
-              className="bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white border-2"
-            >
-              <button onClick={() => signOut({ callbackUrl: "/login" })}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </button>
-            </AnimatedButton>
           </div>
 
           {/* Mobile Menu Button */}
@@ -127,7 +136,7 @@ export function Navbar() {
           <div className="md:hidden py-4 space-y-4">
             <Link
               href="/app"
-              className={`flex items-center px-3 rounded-md transition-colors ${
+              className={`flex items-center rounded-md transition-colors ${
                 isActive("/app") && pathname === "/app"
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -138,41 +147,52 @@ export function Navbar() {
             </Link>
 
             <Link
+              href="/templates"
+              className={`flex items-center py-2 rounded-md transition-colors ${
+                isActive("/templates")
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              <span>Browse Templates</span>
+            </Link>
+
+            <Link
               href="/app/settings"
-              className={`flex items-center px-3 py-2 rounded-md transition-colors ${
+              className={`flex items-center py-2 rounded-md transition-colors ${
                 isActive("/app/settings")
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
               onClick={() => setIsOpen(false)}
             >
+              <div className="relative">
+                <Avatar className="h-6 w-6 mr-2 ring-2 ring-gray-400 ring-offset-2">
+                  <AvatarImage
+                    src={session?.user?.image || undefined}
+                    alt="Profile"
+                  />
+                  <AvatarFallback className="h-6 w-6">
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <span>Settings</span>
             </Link>
 
             {isSuperAdmin && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-3 px-3 rounded-md transition-colors text-muted-foreground hover:text-foreground"
-                onClick={() => setIsOpen(false)}
-              >
-                <ArrowLeft size={20} />
-                <span>Back to Admin</span>
-              </Link>
-            )}
-
-            <div className="flex flex-col gap-2 pt-4">
               <Button
                 variant="ghost"
                 onClick={() => {
-                  signOut({ callbackUrl: "/login" });
+                  router.push("/admin");
                   setIsOpen(false);
                 }}
-                className="flex items-center gap-3 px-3 rounded-md transition-colors text-muted-foreground hover:text-foreground justify-start"
+                className="bg-black text-white hover:bg-gray-800 rounded-md transition-colors py-2"
               >
-                <LogOut size={20} />
-                <span>Sign Out</span>
+                Super Admin Panel
               </Button>
-            </div>
+            )}
           </div>
         )}
       </div>

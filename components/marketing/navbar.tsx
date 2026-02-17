@@ -12,7 +12,7 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
@@ -61,7 +61,7 @@ export function Navbar() {
               animationType="none"
               className="bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white border-2"
             >
-              <Link href="/register">Get Started</Link>
+              <Link href="/login">Get Started</Link>
             </AnimatedButton>
           </div>
 
@@ -106,7 +106,7 @@ export function Navbar() {
                 animationType="none"
                 className="w-full bg-gradient-to-r from-black via-gray-900 to-gray-800 hover:from-gray-900 hover:via-black hover:to-gray-900 text-white border-2"
               >
-                <Link href="/register">Get Started</Link>
+                <Link href="/login">Get Started</Link>
               </AnimatedButton>
             </div>
           </div>

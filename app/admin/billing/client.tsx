@@ -27,11 +27,11 @@ interface Transaction {
 
 interface AuditLog {
   id: string;
-  userId: string | null;
   action: string;
-  details: string | null;
-  ipAddress: string | null;
-  userAgent: string | null;
+  targetType: string;
+  targetId: string;
+  metadata: any;
+  adminEmail: string;
   createdAt: Date;
 }
 

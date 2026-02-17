@@ -19,13 +19,13 @@ export function AIGenerator() {
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -67,11 +67,7 @@ export function AIGenerator() {
 
   return (
     <>
-      <Button
-        size="lg"
-        className="gap-2"
-        onClick={() => setIsOpen(true)}
-      >
+      <Button size="lg" className="gap-2" onClick={() => setIsOpen(true)}>
         <Sparkles className="h-5 w-5" />
         Create with AI
       </Button>
@@ -142,8 +138,8 @@ export function AIGenerator() {
                       </div>
                       <p className="text-xs text-muted-foreground/70 flex items-center gap-2">
                         <span className="text-yellow-500">✨</span>
-                        Be specific when describing your business and services to get the
-                        best results.
+                        Be specific when describing your business and services
+                        to get the best results.
                       </p>
                     </div>
 
@@ -160,7 +156,9 @@ export function AIGenerator() {
                       <Button
                         onClick={handleGenerate}
                         disabled={
-                          isLoading || prompt.length < 10 || prompt.length > 10000
+                          isLoading ||
+                          prompt.length < 10 ||
+                          prompt.length > 10000
                         }
                         className="flex-1 gap-2"
                       >
@@ -182,7 +180,7 @@ export function AIGenerator() {
                     {isLoading && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
+                        animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.2 }}
                         className="space-y-3 p-4 rounded-lg bg-muted/50 overflow-hidden"

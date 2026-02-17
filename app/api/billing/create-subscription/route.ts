@@ -3,11 +3,17 @@ import { auth } from "@/auth";
 import Razorpay from "razorpay";
 import prisma from "@/lib/prisma";
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+// Initialize Razorpay (lazy initialization to avoid build errors)
+function getRazorpayInstance() {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error("Razorpay credentials not configured");
+  }
+
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+}
 
 export async function GET() {
   try {
@@ -35,6 +41,7 @@ export async function GET() {
     }
 
     // Create or get Razorpay customer
+    const razorpay = getRazorpayInstance();
     const customers = await (razorpay.customers.all as any)({
       email: user.email,
     });

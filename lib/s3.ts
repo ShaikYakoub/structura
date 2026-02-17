@@ -1,4 +1,8 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 // Validate environment variables
@@ -10,12 +14,12 @@ function validateEnv() {
     "DO_SPACES_BUCKET",
   ];
 
-  const missing = required.filter(key => !process.env[key]);
-  
+  const missing = required.filter((key) => !process.env[key]);
+
   if (missing.length > 0) {
     throw new Error(
       `DigitalOcean Spaces not configured. Missing environment variables: ${missing.join(", ")}. ` +
-      `Please add them to your .env file to enable image uploads.`
+        `Please add them to your .env file to enable image uploads.`,
     );
   }
 }
@@ -35,7 +39,7 @@ let s3ClientInstance: S3Client | null = null;
 
 function getS3Client(): S3Client {
   validateEnv();
-  
+
   if (!s3ClientInstance) {
     s3ClientInstance = new S3Client({
       endpoint: process.env.DO_SPACES_ENDPOINT,
@@ -46,7 +50,7 @@ function getS3Client(): S3Client {
       },
     });
   }
-  
+
   return s3ClientInstance;
 }
 
@@ -78,7 +82,7 @@ export async function generatePresignedUrl(
 ): Promise<string> {
   const client = getS3Client();
   const bucketName = getBucketName();
-  
+
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: key,
@@ -87,4 +91,50 @@ export async function generatePresignedUrl(
   });
 
   return getSignedUrl(client, command, { expiresIn: 300 }); // 5 minutes
+}
+
+// Upload file directly to S3
+export async function uploadFile(
+  key: string,
+  buffer: Buffer,
+  contentType: string,
+): Promise<string> {
+  const client = getS3Client();
+  const bucketName = getBucketName();
+
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType,
+    ACL: "public-read",
+  });
+
+  await client.send(command);
+  return getPublicUrl(key);
+}
+
+// Delete file from S3
+export async function deleteFile(key: string): Promise<void> {
+  const client = getS3Client();
+  const bucketName = getBucketName();
+
+  const command = new DeleteObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
+
+  await client.send(command);
+}
+
+// Extract key from DO Spaces URL
+export function extractKeyFromUrl(url: string): string | null {
+  try {
+    if (url.includes("digitaloceanspaces.com")) {
+      return url.split(".com/")[1] || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
